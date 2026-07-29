@@ -1,0 +1,340 @@
+---
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import profilePhoto from '../assets/profile.jpg';
+import { experience, education, techStack, featuredRepos } from '../data/profile';
+
+const posts = await getCollection('blog', ({ data }) => !data.draft);
+
+const curatedPostSlugs = ['claude-context-kit-plugin', 'ai-concepts-2025', 'postgresql-connection-pooling-pgbouncer'];
+const curatedPosts = curatedPostSlugs
+  .map((slug) => posts.find((p) => p.id === slug))
+  .filter((p) => p !== undefined);
+
+const research = await getCollection('research');
+const currentResearch = research
+  .filter((r) => r.data.status === 'in-progress')
+  .sort((a, b) => a.data.order - b.data.order);
+
+const dateFormatter = new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: 'short', day: 'numeric' });
+---
+
+<BaseLayout title="Inbeom Lee">
+  <section class="hero section">
+    <div class="container hero-inner">
+      <div class="hero-text">
+        <p class="eyebrow">Backend Developer · Graduate Student</p>
+        <h1>이인범, 안정적인 백엔드 시스템을 연구하고 만듭니다.</h1>
+        <p class="hero-lead text-muted">
+          백엔드를 중심으로 프론트엔드까지 아우르는 풀스택 개발을 하고 있으며, 대규모 로그
+          데이터를 처리하는 보안 솔루션에서 성능 튜닝과 인프라 현대화도 담당하고 있습니다. AI
+          자동매매 시스템 같은 사이드 프로젝트로 서비스에 AI를 접목하는 데도 관심이 많고,
+          대학원에서는 신뢰도 기반 GNN 예측으로 MSA 연쇄 장애에 선제 대응하는 아키텍처를
+          연구하고 있습니다.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="/research/">연구 살펴보기</a>
+          <a class="btn" href="/blog/">블로그 읽기</a>
+        </div>
+      </div>
+      <Image class="hero-photo" src={profilePhoto} alt="이인범 프로필 사진" width={280} height={350} />
+    </div>
+  </section>
+
+  <section class="section section-border" id="about">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">About</p>
+          <h2 class="section-title">소개</h2>
+        </div>
+      </div>
+      <p class="about-lead text-muted">
+        고등학교 때부터 컴퓨터에 관심을 갖고 쭉 개발자의 길을 걸어왔습니다. 지금은 대규모 로그
+        데이터를 다루는 백엔드 시스템을 만들며, AI 도구를 적극 활용해 개발 생산성을 높이는 방법을
+        고민하고 있습니다.
+      </p>
+      <ul class="about-list">
+        <li>Backend Developer</li>
+        <li>Sogang University AI·SW Graduate Student</li>
+        <li>백엔드 성능 튜닝 · 대규모 데이터 처리 최적화</li>
+        <li>AI 도구를 활용한 개발 생산성 향상에 관심</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section-border" id="experience-education">
+    <div class="container grid grid-2">
+      <div>
+        <p class="eyebrow">Experience</p>
+        <h2 class="section-title">경력</h2>
+        <ul class="timeline-list">
+          {experience.map((item) => (
+            <li>
+              <span class="timeline-title">{item.role}</span>
+              <span class="text-muted">{item.company} · {item.period}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div>
+        <p class="eyebrow">Education</p>
+        <h2 class="section-title">학력</h2>
+        <ul class="timeline-list">
+          {education.map((item) => (
+            <li>
+              <span class="timeline-title">{item.school}</span>
+              {item.detail && <span class="text-muted">{item.detail}</span>}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-border" id="tech-stack">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Tech Stack</p>
+          <h2 class="section-title">기술 스택</h2>
+        </div>
+      </div>
+      <div class="grid tech-grid">
+        {techStack.map((group) => (
+          <div class="tech-group">
+            <h3>{group.group}</h3>
+            <div class="tag-row">
+              {group.items.map((item) => (
+                <span class="badge badge-outline">{item}</span>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-border" id="featured-repos">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Featured Repositories</p>
+          <h2 class="section-title">대표 저장소</h2>
+        </div>
+      </div>
+      <div class="grid grid-3">
+        {featuredRepos.map((repo) => (
+          <a class="card repo-card" href={repo.href} target="_blank" rel="noreferrer">
+            <h3>{repo.name}</h3>
+            <p class="text-muted">{repo.description}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-border" id="latest-posts">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Latest Blog Posts</p>
+          <h2 class="section-title">최근 작성한 글</h2>
+        </div>
+        <a class="btn" href="/blog/">전체 글 보기</a>
+      </div>
+      <div class="grid grid-3">
+        {curatedPosts.map((post) => (
+          <a class="card post-card" href={`/blog/${post.id}/`}>
+            <span class="badge">{post.data.category}</span>
+            <h3>{post.data.title}</h3>
+            <p class="text-muted">{post.data.description}</p>
+            <time class="text-muted" datetime={post.data.date.toISOString()}>
+              {dateFormatter.format(post.data.date)}
+            </time>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-border" id="current-research">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Current Research</p>
+          <h2 class="section-title">진행 중인 연구</h2>
+        </div>
+        <a class="btn" href="/research/">연구 전체 보기</a>
+      </div>
+      <div class="grid grid-2">
+        {currentResearch.map((project) => (
+          <a class="card research-card" href={`/research/projects/${project.id}/`}>
+            <span class="badge">{project.data.period}</span>
+            <h3>{project.data.title}</h3>
+            <p class="text-muted">{project.data.summary}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-border" id="documents">
+    <div class="container documents-inner">
+      <div>
+        <p class="eyebrow">Documents</p>
+        <h2 class="section-title">Resume &amp; Portfolio</h2>
+        <p class="text-muted">PDF 파일로 정리한 이력서와 포트폴리오입니다.</p>
+      </div>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="/resume.pdf" target="_blank">Resume (PDF)</a>
+        <a class="btn" href="/portfolio.pdf" target="_blank">Portfolio (PDF)</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero-inner {
+    padding-top: clamp(24px, 6vw, 56px);
+    max-width: 1000px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: clamp(24px, 5vw, 64px);
+  }
+
+  .hero-text {
+    max-width: 640px;
+  }
+
+  .hero-photo {
+    flex-shrink: 0;
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+  }
+
+  @media (max-width: 760px) {
+    .hero-inner {
+      flex-direction: column-reverse;
+      text-align: center;
+    }
+
+    .hero-text {
+      max-width: none;
+    }
+
+    .hero-photo {
+      width: 96px;
+      height: 96px;
+    }
+
+    .hero-actions {
+      justify-content: center;
+    }
+  }
+
+  .hero h1 {
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    margin-top: 12px;
+  }
+
+  .hero-lead {
+    margin-top: 20px;
+    font-size: 1.05rem;
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 28px;
+  }
+
+  .about-lead {
+    max-width: 640px;
+    font-size: 1rem;
+    margin-bottom: 24px;
+  }
+
+  .about-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px 24px;
+    max-width: 640px;
+  }
+
+  .about-list li {
+    position: relative;
+    padding-left: 18px;
+  }
+
+  .about-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.6em;
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: var(--accent);
+  }
+
+  .timeline-list li {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding-block: 12px;
+    border-top: 1px solid var(--border);
+  }
+
+  .timeline-list li:first-child {
+    border-top: none;
+    padding-top: 0;
+  }
+
+  .timeline-title {
+    font-weight: 600;
+  }
+
+  .tech-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+
+  .tech-group h3 {
+    font-size: 1rem;
+    margin-bottom: 12px;
+  }
+
+  .repo-card h3,
+  .post-card h3,
+  .research-card h3 {
+    font-size: 1.05rem;
+    margin-top: 12px;
+  }
+
+  .post-card p,
+  .research-card p {
+    margin-top: 8px;
+    font-size: 0.92rem;
+  }
+
+  .post-card time {
+    display: block;
+    margin-top: 14px;
+    font-size: 0.82rem;
+  }
+
+  .documents-inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+</style>

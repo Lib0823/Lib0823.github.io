@@ -1,0 +1,116 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const publications = (await getCollection('publications')).sort((a, b) => b.data.year - a.data.year);
+
+const byYear = new Map<number, typeof publications>();
+for (const pub of publications) {
+  const list = byYear.get(pub.data.year) ?? [];
+  list.push(pub);
+  byYear.set(pub.data.year, list);
+}
+const years = Array.from(byYear.keys()).sort((a, b) => b - a);
+
+const rendered = await Promise.all(publications.map((pub) => render(pub)));
+const contentById = new Map(publications.map((pub, i) => [pub.id, rendered[i].Content]));
+---
+
+<BaseLayout title="Publications" description="완성되어 발표한 논문 목록.">
+  <section class="section">
+    <div class="container-prose">
+      <a class="back-link text-muted" href="/research/">← Research</a>
+      <p class="eyebrow">Publications</p>
+      <h1 class="page-title">발표 논문</h1>
+
+      {years.map((year) => (
+        <div class="year-group">
+          <h2 class="year-heading">{year}</h2>
+          <ul class="pub-list">
+            {byYear.get(year)!.map((pub) => {
+              const Content = contentById.get(pub.id)!;
+              return (
+                <li class="pub-item">
+                  <h3>{pub.data.title}</h3>
+                  {pub.data.venue && <p class="text-muted venue">{pub.data.venue}</p>}
+                  <div class="prose pub-abstract">
+                    <Content />
+                  </div>
+                  <div class="pub-links">
+                    {pub.data.pdf ? (
+                      <a class="badge" href={pub.data.pdf} target="_blank" rel="noreferrer">PDF</a>
+                    ) : (
+                      <span class="badge badge-outline">PDF 준비 중</span>
+                    )}
+                    {pub.data.slides && (
+                      <a class="badge" href={pub.data.slides} target="_blank" rel="noreferrer">Slides</a>
+                    )}
+                    {pub.data.repo && (
+                      <a class="badge" href={pub.data.repo} target="_blank" rel="noreferrer">Repository</a>
+                    )}
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .back-link {
+    display: block;
+    font-size: 0.9rem;
+    margin-bottom: 24px;
+  }
+
+  .back-link:hover {
+    color: var(--accent);
+  }
+
+  .page-title {
+    font-size: clamp(1.8rem, 4vw, 2.4rem);
+    margin-top: 8px;
+    margin-bottom: 40px;
+  }
+
+  .year-group + .year-group {
+    margin-top: 40px;
+  }
+
+  .year-heading {
+    font-size: 1.2rem;
+    color: var(--accent);
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .pub-list {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .pub-item h3 {
+    font-size: 1.1rem;
+  }
+
+  .venue {
+    margin-top: 4px;
+    font-size: 0.88rem;
+  }
+
+  .pub-abstract {
+    margin-top: 10px;
+    font-size: 0.94rem;
+  }
+
+  .pub-links {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+  }
+</style>

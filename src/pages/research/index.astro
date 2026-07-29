@@ -1,0 +1,184 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const research = (await getCollection('research')).sort((a, b) => a.data.order - b.data.order);
+const currentResearch = research.filter((r) => r.data.status === 'in-progress');
+
+const interests = ['Distributed Systems', 'Cloud Computing', 'Microservice Architecture', 'Fault Tolerance', 'Artificial Intelligence'];
+
+const statusLabel = {
+  'in-progress': '진행 중',
+  completed: '완료',
+  planned: '예정',
+};
+---
+
+<BaseLayout title="Research" description="분산 시스템과 클라우드 컴퓨팅을 중심으로 한 대학원 연구 아카이브.">
+  <section class="section">
+    <div class="container">
+      <p class="eyebrow">Research</p>
+      <h1 class="page-title">연구 소개</h1>
+      <p class="text-muted page-lead">
+        대학원에서 진행 중인 연구와 완료한 논문을 기록합니다. 실제 코드와 실험은 각 프로젝트의 GitHub
+        저장소에서 관리합니다.
+      </p>
+
+      <div class="nav-cards">
+        <a class="card nav-card" href="/research/projects/">
+          <h2>Research Projects</h2>
+          <p class="text-muted">진행 중이거나 완료한 연구 프로젝트 목록</p>
+        </a>
+        <a class="card nav-card" href="/research/publications/">
+          <h2>Publications</h2>
+          <p class="text-muted">완성되어 발표한 논문 목록</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-border">
+    <div class="container grid grid-2">
+      <div>
+        <p class="eyebrow">Research Interests</p>
+        <h2 class="section-title">관심 연구 분야</h2>
+        <div class="tag-row interest-tags">
+          {interests.map((interest) => (
+            <span class="badge">{interest}</span>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <p class="eyebrow">Research Goal</p>
+        <h2 class="section-title">연구 목표</h2>
+        <p class="text-muted goal-text">
+          분산 환경에서 발생하는 장애와 성능 문제를 데이터 기반으로 분석하고, 실제 서비스 운영에
+          적용 가능한 형태로 연구 결과를 이어가는 것을 목표로 합니다.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-border">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Current Research</p>
+          <h2 class="section-title">현재 진행 중인 연구</h2>
+        </div>
+      </div>
+      <div class="grid grid-2">
+        {currentResearch.map((project) => (
+          <a class="card research-card" href={`/research/projects/${project.id}/`}>
+            <span class="badge">{project.data.period}</span>
+            <h3>{project.data.title}</h3>
+            <p class="text-muted">{project.data.summary}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-border">
+    <div class="container">
+      <p class="eyebrow">Research Timeline</p>
+      <h2 class="section-title">연구 진행 흐름</h2>
+      <ol class="timeline">
+        {research.map((project) => (
+          <li>
+            <span class="timeline-period text-muted">{project.data.period}</span>
+            <div>
+              <h3>{project.data.title}</h3>
+              <span class="badge badge-outline">{statusLabel[project.data.status]}</span>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-title {
+    font-size: clamp(1.8rem, 4vw, 2.4rem);
+    margin-top: 8px;
+  }
+
+  .page-lead {
+    margin-top: 12px;
+    max-width: 680px;
+  }
+
+  .nav-cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-top: 36px;
+  }
+
+  .nav-card h2 {
+    font-size: 1.1rem;
+  }
+
+  .nav-card p {
+    margin-top: 8px;
+  }
+
+  @media (max-width: 640px) {
+    .nav-cards {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .interest-tags {
+    margin-top: 20px;
+  }
+
+  .goal-text {
+    margin-top: 20px;
+    max-width: 480px;
+  }
+
+  .research-card h3 {
+    font-size: 1.05rem;
+    margin-top: 12px;
+  }
+
+  .research-card p {
+    margin-top: 8px;
+    font-size: 0.92rem;
+  }
+
+  .timeline {
+    margin-top: 24px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .timeline li {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 20px;
+    padding-block: 18px;
+    border-top: 1px solid var(--border);
+  }
+
+  .timeline li:first-child {
+    border-top: none;
+    padding-top: 0;
+  }
+
+  .timeline h3 {
+    font-size: 1rem;
+    display: inline;
+    margin-right: 12px;
+  }
+
+  @media (max-width: 560px) {
+    .timeline li {
+      grid-template-columns: 1fr;
+      gap: 6px;
+    }
+  }
+</style>

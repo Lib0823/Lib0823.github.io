@@ -1,0 +1,124 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { slugify } from '../../lib/taxonomy';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const dateFormatter = new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' });
+---
+
+<BaseLayout title={post.data.title} description={post.data.description}>
+  <article class="section">
+    <div class="container-prose">
+      <a class="back-link text-muted" href="/blog/">← 목록으로</a>
+
+      <a class="badge" href={`/blog/category/${slugify(post.data.category)}/`}>{post.data.category}</a>
+      <h1 class="post-title">{post.data.title}</h1>
+      <p class="post-description text-muted">{post.data.description}</p>
+
+      <div class="post-meta">
+        <time datetime={post.data.date.toISOString()}>{dateFormatter.format(post.data.date)}</time>
+        <div class="tag-row">
+          {post.data.tags.map((tag) => (
+            <a class="badge badge-outline" href={`/blog/tag/${slugify(tag)}/`}>{tag}</a>
+          ))}
+        </div>
+      </div>
+
+      <div class="prose post-body">
+        <Content />
+      </div>
+    </div>
+  </article>
+</BaseLayout>
+
+<script>
+  const blocks = document.querySelectorAll('pre.astro-code[data-language="mermaid"]');
+  if (blocks.length > 0) {
+    const mermaid = (await import('mermaid')).default;
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark'
+      || (!document.documentElement.getAttribute('data-theme')
+        && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    mermaid.initialize({ startOnLoad: false, theme: isDark ? 'dark' : 'default' });
+
+    let i = 0;
+    for (const block of blocks) {
+      const code = block.querySelector('code')?.textContent ?? '';
+      const container = document.createElement('div');
+      container.className = 'mermaid-diagram';
+      try {
+        const { svg } = await mermaid.render(`mermaid-${i++}`, code);
+        container.innerHTML = svg;
+        block.replaceWith(container);
+      } catch (e) {
+        console.error('Mermaid render failed', e);
+      }
+    }
+  }
+</script>
+
+<style is:global>
+  .mermaid-diagram {
+    margin: 1.5em 0;
+    overflow-x: auto;
+    text-align: center;
+  }
+
+  .mermaid-diagram svg {
+    max-width: 100%;
+    height: auto;
+  }
+</style>
+
+<style>
+  .back-link {
+    display: block;
+    font-size: 0.9rem;
+    margin-bottom: 24px;
+  }
+
+  .back-link:hover {
+    color: var(--accent);
+  }
+
+  .post-title {
+    font-size: clamp(1.6rem, 4vw, 2.2rem);
+    margin-top: 16px;
+  }
+
+  .post-description {
+    margin-top: 12px;
+    font-size: 1.05rem;
+  }
+
+  .post-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+    margin-top: 20px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.9rem;
+  }
+
+  .post-body {
+    margin-top: 36px;
+  }
+
+  a.badge:hover,
+  a.badge-outline:hover {
+    background: var(--accent);
+    color: var(--accent-contrast);
+  }
+</style>

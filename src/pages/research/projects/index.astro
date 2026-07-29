@@ -1,0 +1,81 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+
+const projects = (await getCollection('research')).sort((a, b) => a.data.order - b.data.order);
+
+const statusLabel = {
+  'in-progress': '진행 중',
+  completed: '완료',
+  planned: '예정',
+};
+---
+
+<BaseLayout title="Research Projects" description="진행 중이거나 완료한 연구 프로젝트 목록.">
+  <section class="section">
+    <div class="container">
+      <a class="back-link text-muted" href="/research/">← Research</a>
+      <p class="eyebrow">Research Projects</p>
+      <h1 class="page-title">연구 프로젝트</h1>
+
+      <div class="grid grid-2 project-grid">
+        {projects.map((project) => (
+          <a class="card project-card" href={`/research/projects/${project.id}/`}>
+            <div class="project-card-head">
+              <span class="badge">{statusLabel[project.data.status]}</span>
+              <span class="text-muted period">{project.data.period}</span>
+            </div>
+            <h2>{project.data.title}</h2>
+            <p class="text-muted">{project.data.summary}</p>
+            <div class="tag-row">
+              {project.data.tags.map((tag) => (
+                <span class="badge badge-outline">{tag}</span>
+              ))}
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .back-link {
+    display: block;
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+  }
+
+  .back-link:hover {
+    color: var(--accent);
+  }
+
+  .page-title {
+    font-size: clamp(1.8rem, 4vw, 2.4rem);
+    margin-top: 8px;
+    margin-bottom: 36px;
+  }
+
+  .project-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .period {
+    font-size: 0.85rem;
+  }
+
+  .project-card h2 {
+    font-size: 1.15rem;
+    margin-top: 14px;
+  }
+
+  .project-card p {
+    margin-top: 10px;
+  }
+
+  .project-card .tag-row {
+    margin-top: 16px;
+  }
+</style>

@@ -1,0 +1,46 @@
+---
+import type { Page } from 'astro';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  page: Page<CollectionEntry<'blog'>>;
+}
+
+const { page } = Astro.props;
+---
+
+{page.lastPage > 1 && (
+  <nav class="pagination" aria-label="페이지 네비게이션">
+    {page.url.prev ? (
+      <a class="btn" href={page.url.prev}>← 이전</a>
+    ) : (
+      <span class="btn btn-disabled" aria-disabled="true">← 이전</span>
+    )}
+    <span class="pagination-status text-muted">{page.currentPage} / {page.lastPage}</span>
+    {page.url.next ? (
+      <a class="btn" href={page.url.next}>다음 →</a>
+    ) : (
+      <span class="btn btn-disabled" aria-disabled="true">다음 →</span>
+    )}
+  </nav>
+)}
+
+<style>
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 48px;
+  }
+
+  .pagination-status {
+    font-size: 0.9rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .btn-disabled {
+    opacity: 0.4;
+    pointer-events: none;
+  }
+</style>

@@ -1,0 +1,52 @@
+---
+const year = new Date().getFullYear();
+const links = [
+  { label: 'GitHub', href: 'https://github.com/Lib0823' },
+  { label: 'Email', href: 'mailto:ib.lee@weeds.co.kr' },
+  { label: 'RSS', href: '/rss.xml' },
+];
+---
+
+<footer class="site-footer section-border">
+  <div class="container footer-inner">
+    <p class="text-muted">&copy; {year} Inbeom Lee. Built with Astro.</p>
+    <ul class="footer-links">
+      {links.map((link) => (
+        <li>
+          <a href={link.href} target={link.href.startsWith('http') ? '_blank' : undefined} rel="noreferrer">
+            {link.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    padding-block: 32px;
+  }
+
+  .footer-inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 20px;
+  }
+
+  .footer-links a {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    transition: color 0.15s ease;
+  }
+
+  .footer-links a:hover {
+    color: var(--accent);
+  }
+</style>

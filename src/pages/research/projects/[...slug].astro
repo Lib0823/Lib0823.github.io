@@ -1,0 +1,92 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('research');
+  return projects.map((project) => ({
+    params: { slug: project.id },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+
+const statusLabel = {
+  'in-progress': '진행 중',
+  completed: '완료',
+  planned: '예정',
+};
+---
+
+<BaseLayout title={project.data.title} description={project.data.summary}>
+  <article class="section">
+    <div class="container-prose">
+      <a class="back-link text-muted" href="/research/projects/">← 프로젝트 목록으로</a>
+
+      <div class="project-head-tags">
+        <span class="badge">{statusLabel[project.data.status]}</span>
+        <span class="badge badge-outline">{project.data.period}</span>
+      </div>
+
+      <h1 class="project-title">{project.data.title}</h1>
+      <p class="project-summary text-muted">{project.data.summary}</p>
+
+      <div class="tag-row project-tags">
+        {project.data.tags.map((tag) => (
+          <span class="badge badge-outline">{tag}</span>
+        ))}
+      </div>
+
+      {project.data.repo && (
+        <a class="btn" href={project.data.repo} target="_blank" rel="noreferrer">GitHub Repository →</a>
+      )}
+
+      <div class="prose project-body">
+        <Content />
+      </div>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .back-link {
+    display: block;
+    font-size: 0.9rem;
+    margin-bottom: 24px;
+  }
+
+  .back-link:hover {
+    color: var(--accent);
+  }
+
+  .project-head-tags {
+    display: flex;
+    gap: 8px;
+  }
+
+  .project-title {
+    font-size: clamp(1.6rem, 4vw, 2.2rem);
+    margin-top: 16px;
+  }
+
+  .project-summary {
+    margin-top: 12px;
+    font-size: 1.05rem;
+  }
+
+  .project-tags {
+    margin-top: 20px;
+  }
+
+  .project-body {
+    margin-top: 36px;
+    padding-top: 28px;
+    border-top: 1px solid var(--border);
+  }
+
+  a.btn {
+    margin-top: 24px;
+  }
+</style>

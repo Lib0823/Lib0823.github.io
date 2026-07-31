@@ -7,7 +7,7 @@ import { experience, education, techStack, featuredRepos } from '../data/profile
 
 const posts = await getCollection('blog', ({ data }) => !data.draft);
 
-const curatedPostSlugs = ['claude-context-kit-plugin', 'ai-concepts-2025', 'postgresql-connection-pooling-pgbouncer'];
+const curatedPostSlugs = ['claude-context-kit-plugin', 'database-rocksdb-rdb-memorydb', 'postgresql-connection-pooling-pgbouncer'];
 const curatedPosts = curatedPostSlugs
   .map((slug) => posts.find((p) => p.id === slug))
   .filter((p) => p !== undefined);

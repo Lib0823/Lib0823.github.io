@@ -1,0 +1,175 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import PostCard from './PostCard.astro';
+
+interface Props {
+  posts: CollectionEntry<'blog'>[];
+}
+
+const { posts } = Astro.props;
+---
+
+<div class="grid-toolbar">
+  <p class="text-muted result-count">{posts.length}개의 글</p>
+  <div class="view-toggle" role="group" aria-label="보기 방식">
+    <button type="button" class="view-btn" data-view-btn="grid" aria-pressed="true">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="3" y="3" width="7" height="7" />
+        <rect x="14" y="3" width="7" height="7" />
+        <rect x="3" y="14" width="7" height="7" />
+        <rect x="14" y="14" width="7" height="7" />
+      </svg>
+      카드
+    </button>
+    <button type="button" class="view-btn" data-view-btn="list" aria-pressed="false">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <line x1="8" y1="6" x2="21" y2="6" />
+        <line x1="8" y1="12" x2="21" y2="12" />
+        <line x1="8" y1="18" x2="21" y2="18" />
+        <line x1="3" y1="6" x2="3.01" y2="6" />
+        <line x1="3" y1="12" x2="3.01" y2="12" />
+        <line x1="3" y1="18" x2="3.01" y2="18" />
+      </svg>
+      목록
+    </button>
+  </div>
+</div>
+
+<div class="post-grid grid grid-3" data-post-grid data-view="grid">
+  {posts.map((post) => <PostCard post={post} />)}
+</div>
+
+<script is:inline>
+  (function () {
+    var grid = document.querySelector('[data-post-grid]');
+    var btns = document.querySelectorAll('[data-view-btn]');
+    if (!grid || !btns.length) return;
+
+    var stored = localStorage.getItem('blog-view');
+    if (stored === 'list' || stored === 'grid') {
+      grid.setAttribute('data-view', stored);
+    }
+
+    function sync() {
+      var current = grid.getAttribute('data-view');
+      btns.forEach(function (btn) {
+        btn.setAttribute('aria-pressed', String(btn.getAttribute('data-view-btn') === current));
+      });
+    }
+    sync();
+
+    btns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var view = btn.getAttribute('data-view-btn');
+        grid.setAttribute('data-view', view);
+        localStorage.setItem('blog-view', view);
+        sync();
+      });
+    });
+  })();
+</script>
+
+<style>
+  .grid-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .result-count {
+    font-size: 0.88rem;
+  }
+
+  .view-toggle {
+    display: inline-flex;
+    flex-shrink: 0;
+    padding: 3px;
+    border-radius: 999px;
+    background: var(--bg-inset);
+    gap: 2px;
+  }
+
+  .view-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    transition: background-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .view-btn[aria-pressed='true'] {
+    background: var(--bg);
+    color: var(--text);
+    box-shadow: var(--shadow);
+  }
+</style>
+
+<style is:global>
+  .post-grid[data-view='list'] {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .post-grid[data-view='list'] .post-card {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    padding: 14px 6px;
+    border: none;
+    border-radius: 0;
+    border-bottom: 1px solid var(--border);
+    background: none;
+  }
+
+  .post-grid[data-view='list'] .post-card:first-child {
+    border-top: 1px solid var(--border);
+  }
+
+  .post-grid[data-view='list'] .post-card:hover {
+    transform: none;
+    box-shadow: none;
+    background: var(--bg-soft);
+  }
+
+  .post-grid[data-view='list'] .post-card .badge {
+    flex-shrink: 0;
+  }
+
+  .post-grid[data-view='list'] .post-card h2 {
+    margin-top: 0;
+    font-size: 0.95rem;
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .post-grid[data-view='list'] .post-card p,
+  .post-grid[data-view='list'] .post-card .post-tags {
+    display: none;
+  }
+
+  .post-grid[data-view='list'] .post-card time {
+    flex-shrink: 0;
+    margin-top: 0;
+    font-size: 0.82rem;
+  }
+
+  @media (max-width: 640px) {
+    .post-grid[data-view='list'] .post-card {
+      flex-wrap: wrap;
+    }
+
+    .post-grid[data-view='list'] .post-card h2 {
+      white-space: normal;
+      flex-basis: 100%;
+    }
+  }
+</style>

@@ -1,9 +1,10 @@
 ---
 import type { GetStaticPathsOptions } from 'astro';
 import { getCollection } from 'astro:content';
+import PagefindConfig from 'astro-pagefind/components/PagefindConfig.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import BlogFilterNav from '../../components/BlogFilterNav.astro';
-import PostCard from '../../components/PostCard.astro';
+import PostGrid from '../../components/PostGrid.astro';
 import Pagination from '../../components/Pagination.astro';
 import { PAGE_SIZE } from '../../lib/taxonomy';
 
@@ -25,13 +26,15 @@ const allPosts = await getCollection('blog', ({ data }) => !data.draft);
       <h1 class="page-title">기술 블로그</h1>
       <p class="text-muted page-lead">Backend, Language, Database, Infrastructure, AI 주제로 작성한 기술 기록입니다.</p>
 
+      <PagefindConfig instance="blog-search" />
+      <div class="search-box">
+        <pagefind-searchbox instance="blog-search" placeholder="글 제목, 내용으로 검색"></pagefind-searchbox>
+      </div>
+      <pagefind-results instance="blog-search"></pagefind-results>
+
       <BlogFilterNav posts={allPosts} />
 
-      <div class="grid grid-3 post-grid">
-        {page.data.map((post) => (
-          <PostCard post={post} />
-        ))}
-      </div>
+      <PostGrid posts={page.data} />
 
       <Pagination page={page} />
     </div>
@@ -47,5 +50,33 @@ const allPosts = await getCollection('blog', ({ data }) => !data.draft);
   .page-lead {
     margin-top: 12px;
     max-width: 640px;
+  }
+
+  .search-box {
+    margin-top: 28px;
+    max-width: 480px;
+  }
+</style>
+
+<style is:global>
+  .search-box,
+  pagefind-results {
+    --pf-text: var(--text);
+    --pf-text-secondary: var(--text-muted);
+    --pf-text-muted: var(--text-faint);
+    --pf-background: var(--bg);
+    --pf-border: var(--border);
+    --pf-border-focus: var(--accent);
+    --pf-hover: var(--bg-soft);
+    --pf-mark: var(--accent);
+    --pf-outline-focus: var(--accent);
+    --pf-font: var(--font-sans);
+    --pf-border-radius: var(--radius-sm);
+    --pf-shadow-md: var(--shadow);
+  }
+
+  pagefind-results {
+    display: block;
+    margin-top: 12px;
   }
 </style>

@@ -11,23 +11,6 @@ draft: false
 
 ![Functional Interface를 활용한 Lazy 초기화 전략](./functional-interface-lazy-1.png)
 
-## 목차
-
-> **1. 배경 지식**
-> 1.1 Lazy 초기화란?
-> 1.2 Functional Interface와 Supplier
-> **2. 문제 상황**
-> 2.1 기존 환경
-> 2.2 문제점 인식
-> 2.3 @Lazy 적용 시도
-> **3. 해결 방법: Supplier를 활용한 Lazy 초기화**
-> 3.1 핵심 아이디어
-> 3.2 개선된 코드
-> 3.3 동작 흐름 비교
-> **4. 실제 사용 예시**
-> **5. 추가 개선: 캐싱을 통한 중복 초기화 방지**
-> **6. 정리**
-
 ## 1. 배경 지식
 
 ### **Lazy 초기화란?**

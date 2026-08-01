@@ -10,16 +10,6 @@ draft: false
 > Meta가 개발한 LSM-Tree 기반의 Key-Value 스토어.
 > 빠른 쓰기 성능과 디스크 영속성을 동시에 챙긴다.
 
-## 목차
-
-1. RocksDB란?
-2. 핵심 이론 개념
-3. 실제 활용과 장단점
-4. Spring Boot 코드 예시
-5. 정리
-
----
-
 ## 1. RocksDB란?
 
 백엔드 개발을 하다 보면 데이터를 어디에 저장할지 고민할 때 선택지가 보통 이렇게 나뉜다.
@@ -105,7 +95,7 @@ Flush될 때마다 새 SSTable이 생기기 때문에, 주기적으로 **Compact
 [L2: 더 큰 SSTable]
 ```
 
-Compaction 덕분에 **오래된 버전 데이터, 삭제된 데이터(Tombstone)**가 정리된다.
+Compaction 덕분에 오래된 버전 데이터, 삭제된 데이터(Tombstone)가 정리된다.
 
 단, Compaction은 CPU/디스크 I/O를 소모하는 **Write Amplification**의 원인이기도 하다.
 

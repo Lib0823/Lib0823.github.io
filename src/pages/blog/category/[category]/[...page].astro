@@ -31,7 +31,14 @@ const allPosts = await getCollection('blog', ({ data }) => !data.draft);
   <section class="section">
     <div class="container">
       <a class="back-link text-muted" href="/blog/">← Blog</a>
-      <p class="eyebrow">Category</p>
+      <div class="kicker">
+        <span class="section-icon">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z" />
+          </svg>
+        </span>
+        <p class="eyebrow">Category</p>
+      </div>
       <h1 class="page-title">{categoryLabel}</h1>
 
       <BlogFilterNav posts={allPosts} activeCategorySlug={slugify(categoryLabel)} />

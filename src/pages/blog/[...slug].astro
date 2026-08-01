@@ -12,32 +12,116 @@ export async function getStaticPaths() {
 }
 
 const { post } = Astro.props;
-const { Content } = await render(post);
+const { Content, headings } = await render(post);
+const tocHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
 
 const dateFormatter = new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' });
+
+// Rough reading-time estimate for mixed Korean/English/code content.
+const CHARS_PER_MINUTE = 500;
+const plainText = post.body?.replace(/```[\s\S]*?```/g, '').replace(/[#>*_`~[\]()!-]/g, '') ?? '';
+const readingMinutes = Math.max(1, Math.round(plainText.length / CHARS_PER_MINUTE));
+
+const orderedPosts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+const currentIndex = orderedPosts.findIndex((p) => p.id === post.id);
+const newerPost = currentIndex > 0 ? orderedPosts[currentIndex - 1] : undefined;
+const olderPost = currentIndex < orderedPosts.length - 1 ? orderedPosts[currentIndex + 1] : undefined;
+
+// Related posts: score by shared category (+3) and shared tags (+1 each), no AI needed.
+const RELATED_COUNT = 3;
+const relatedPosts = orderedPosts
+  .filter((p) => p.id !== post.id)
+  .map((p) => {
+    const sharedTags = p.data.tags.filter((tag) => post.data.tags.includes(tag));
+    const score = (p.data.category === post.data.category ? 3 : 0) + sharedTags.length;
+    return { post: p, score };
+  })
+  .filter((entry) => entry.score > 0)
+  .sort((a, b) => b.score - a.score || b.post.data.date.valueOf() - a.post.data.date.valueOf())
+  .slice(0, RELATED_COUNT)
+  .map((entry) => entry.post);
 ---
 
 <BaseLayout title={post.data.title} description={post.data.description}>
   <article class="section" data-pagefind-body>
-    <div class="container-prose">
-      <a class="back-link text-muted" href="/blog/">← 목록으로</a>
+    <div class="post-shell">
+      <div class="post-main container-prose">
+        <a class="back-link text-muted" href="/blog/">← 목록으로</a>
 
-      <a class="badge" href={`/blog/category/${slugify(post.data.category)}/`}>{post.data.category}</a>
-      <h1 class="post-title">{post.data.title}</h1>
-      <p class="post-description text-muted">{post.data.description}</p>
+        <a class="badge" href={`/blog/category/${slugify(post.data.category)}/`}>{post.data.category}</a>
+        <h1 class="post-title">{post.data.title}</h1>
+        <p class="post-description text-muted">{post.data.description}</p>
 
-      <div class="post-meta">
-        <time datetime={post.data.date.toISOString()}>{dateFormatter.format(post.data.date)}</time>
-        <div class="tag-row">
-          {post.data.tags.map((tag) => (
-            <a class="badge badge-outline" href={`/blog/tag/${slugify(tag)}/`}>{tag}</a>
-          ))}
+        <div class="post-meta">
+          <time datetime={post.data.date.toISOString()}>{dateFormatter.format(post.data.date)}</time>
+          <span class="text-muted">·</span>
+          <span class="text-muted">약 {readingMinutes}분 소요</span>
+          <div class="tag-row">
+            {post.data.tags.map((tag) => (
+              <a class="badge badge-outline" href={`/blog/tag/${slugify(tag)}/`}>{tag}</a>
+            ))}
+          </div>
         </div>
+
+        {tocHeadings.length > 0 && (
+          <details class="post-toc-mobile">
+            <summary>목차</summary>
+            <ul>
+              {tocHeadings.map((h) => (
+                <li class={`toc-depth-${h.depth}`}><a href={`#${h.slug}`}>{h.text}</a></li>
+              ))}
+            </ul>
+          </details>
+        )}
+
+        <div class="prose post-body">
+          <Content />
+        </div>
+
+        {relatedPosts.length > 0 && (
+          <section class="post-related" aria-label="관련 글">
+            <p class="post-related-title">관련 글</p>
+            <div class="post-related-list">
+              {relatedPosts.map((related) => (
+                <a class="post-related-link" href={`/blog/${related.id}/`}>
+                  <span class="badge">{related.data.category}</span>
+                  <span class="post-related-link-title">{related.data.title}</span>
+                </a>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {(olderPost || newerPost) && (
+          <nav class="post-nav" aria-label="이전글 다음글 탐색">
+            {olderPost ? (
+              <a class="post-nav-link post-nav-prev" href={`/blog/${olderPost.id}/`}>
+                <span class="post-nav-label text-muted">← 이전 글</span>
+                <span class="post-nav-title">{olderPost.data.title}</span>
+              </a>
+            ) : <span />}
+            {newerPost ? (
+              <a class="post-nav-link post-nav-next" href={`/blog/${newerPost.id}/`}>
+                <span class="post-nav-label text-muted">다음 글 →</span>
+                <span class="post-nav-title">{newerPost.data.title}</span>
+              </a>
+            ) : <span />}
+          </nav>
+        )}
       </div>
 
-      <div class="prose post-body">
-        <Content />
-      </div>
+      {tocHeadings.length > 0 && (
+        <aside class="post-toc" data-post-toc>
+          <p class="post-toc-title">목차</p>
+          <ul>
+            {tocHeadings.map((h) => (
+              <li class={`toc-depth-${h.depth}`}><a href={`#${h.slug}`}>{h.text}</a></li>
+            ))}
+          </ul>
+        </aside>
+      )}
     </div>
   </article>
 </BaseLayout>
@@ -121,4 +205,251 @@ const dateFormatter = new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month:
     background: var(--accent);
     color: var(--accent-contrast);
   }
+
+  .post-related {
+    margin-top: 56px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+  }
+
+  .post-related-title {
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+  }
+
+  .post-related-list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .post-related-link {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 4px;
+    border-top: 1px solid var(--border);
+    transition: color 0.15s ease;
+  }
+
+  .post-related-list a:last-child {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .post-related-link:hover {
+    color: var(--accent);
+  }
+
+  .post-related-link .badge {
+    flex-shrink: 0;
+  }
+
+  .post-related-link-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+
+  .post-nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 56px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+  }
+
+  .post-related + .post-nav {
+    border-top: none;
+    margin-top: 32px;
+    padding-top: 0;
+  }
+
+  .post-nav-link {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 18px 20px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--bg-soft);
+    transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+    min-width: 0;
+  }
+
+  .post-nav-link:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent);
+    box-shadow: var(--shadow);
+  }
+
+  .post-nav-next {
+    text-align: right;
+    grid-column: 2;
+  }
+
+  .post-nav-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  .post-nav-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  @media (max-width: 640px) {
+    .post-nav {
+      grid-template-columns: 1fr;
+    }
+
+    .post-nav-next {
+      grid-column: 1;
+      text-align: left;
+    }
+  }
+
+  .post-toc-mobile {
+    margin-top: 28px;
+    padding: 14px 18px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--bg-soft);
+  }
+
+  .post-toc-mobile summary {
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.92rem;
+  }
+
+  .post-toc-mobile ul {
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .post-toc-mobile a {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+
+  .post-toc-mobile a:hover {
+    color: var(--accent);
+  }
+
+  .post-toc-mobile .toc-depth-3 {
+    padding-left: 16px;
+    font-size: 0.94em;
+  }
+
+  .post-toc {
+    display: none;
+  }
+
+  @media (min-width: 1100px) {
+    .post-shell {
+      display: grid;
+      grid-template-columns: 720px 220px;
+      justify-content: center;
+      align-items: start;
+      gap: 48px;
+      max-width: var(--container-wide);
+      margin-inline: auto;
+      padding-inline: 24px;
+    }
+
+    .post-shell .post-main.container-prose {
+      max-width: none;
+      margin-inline: 0;
+      padding-inline: 0;
+    }
+
+    .post-toc-mobile {
+      display: none;
+    }
+
+    .post-toc {
+      display: block;
+      position: sticky;
+      top: 96px;
+      align-self: start;
+      max-height: calc(100vh - 140px);
+      overflow-y: auto;
+      font-size: 0.86rem;
+    }
+
+    .post-toc-title {
+      font-weight: 700;
+      margin-bottom: 10px;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+    }
+
+    .post-toc ul {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .post-toc a {
+      display: block;
+      padding: 4px 0 4px 10px;
+      border-left: 2px solid transparent;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .post-toc a:hover {
+      color: var(--text);
+    }
+
+    .post-toc a.active {
+      border-left-color: var(--accent);
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .post-toc .toc-depth-3 a {
+      padding-left: 22px;
+      font-size: 0.92em;
+    }
+  }
 </style>
+
+<script>
+  const tocLinks = document.querySelectorAll('[data-post-toc] a[href^="#"]');
+  const headingEls = Array.from(tocLinks)
+    .map((link) => document.getElementById(decodeURIComponent(link.getAttribute('href')?.slice(1) ?? '')))
+    .filter((el) => el !== null);
+
+  if (tocLinks.length > 0 && headingEls.length > 0) {
+    const setActive = (id: string | null) => {
+      tocLinks.forEach((link) => {
+        link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
+      });
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries.filter((entry) => entry.isIntersecting);
+        if (visible.length > 0) {
+          setActive(visible[0].target.id);
+        }
+      },
+      { rootMargin: '-96px 0px -70% 0px' },
+    );
+
+    headingEls.forEach((el) => observer.observe(el));
+  }
+</script>

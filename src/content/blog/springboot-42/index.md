@@ -80,11 +80,11 @@ HTTP (Hyper Text Transfer Protocol)로 RFC 2616에서 규정된 Web에서 데이
 
 - html, xml, json, image, pdf 등 다양한 형태로 전송할 수 있다.
 - TCP를 기반으로 한 REST의 특징을 모두 구현하고 있는 Web기반의 프로토콜이다.
-- **HTTP는 메시지를 주고(Request) 받는(Response) 형태의 통신 방법이다.**
+- HTTP는 메시지를 주고(Request) 받는(Response) 형태의 통신 방법이다.
 
 ![Web이란?](./web-1.png)
 
-- **HTTP의 요청을 특정하는 Method는 8가지가 있다.**
+- HTTP의 요청을 특정하는 Method는 8가지가 있다.
 
 ![Web이란?](./web-2.png)
 

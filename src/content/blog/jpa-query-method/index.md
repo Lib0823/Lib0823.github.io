@@ -7,7 +7,7 @@ tags: ['Spring', 'JPA', 'Spring data JPA', 'query method']
 draft: false
 ---
 
-> **Spring Data JPA에서 제공하는 공동 인터페이스는 기본적인 CRUD를 제공해준다. (JpaRepository)**
+> Spring Data JPA에서 제공하는 공동 인터페이스는 기본적인 CRUD를 제공해준다. (JpaRepository)
 
 ![Query Method. 쿼리 메서드](./query-method-1.png)
 

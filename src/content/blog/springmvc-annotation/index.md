@@ -27,15 +27,15 @@ public class ApplicationConfig {
 }
 ```
 
-@Bean어노테이션에 **name이라는 값을 이용하면 자신이 원하는 id로 Bean을 등록할 수 있다**.
+@Bean어노테이션에 name이라는 값을 이용하면 자신이 원하는 id로 Bean을 등록할 수 있다.
 
-어노테이션 안에 값을 입력하지 않을 경우 **메소드의 이름을 CamelCase로 변경한 것이 Bean의 id가 된다.**
+어노테이션 안에 값을 입력하지 않을 경우 메소드의 이름을 CamelCase로 변경한 것이 Bean의 id가 된다.
 
 ### **@Component**
 
 개발자가 직접 작성한 Class를 Spring의 Bean으로 등록할 때 사용하는 Annotation이다.
 
-@Bean과는 다르게 @Component는 name이 아닌 **value를 이용해 Bean의 이름을 지정**한다.
+@Bean과는 다르게 @Component는 name이 아닌 value를 이용해 Bean의 이름을 지정한다.
 
 ```java
 @Component
@@ -56,11 +56,11 @@ public class Student {
 
 ### **@Autowired**
 
-속성(field), setter method, constructor(생성자)에서 사용하며, **Type에 따라 알아서 Bean을 주입 해준다.**
+속성(field), setter method, constructor(생성자)에서 사용하며, Type에 따라 알아서 Bean을 주입 해준다.
 
-무조건적인 객체에 대한 의존성을 주입 시키고, **스프링이 자동적으로 값을 할당**한다.
+무조건적인 객체에 대한 의존성을 주입 시키고, 스프링이 자동적으로 값을 할당한다.
 
-**Controller 클래스에서 DAO나 Service에 관한 객체들을 주입 시킬 때 많이 사용**한다.
+Controller 클래스에서 DAO나 Service에 관한 객체들을 주입 시킬 때 많이 사용한다.
 
 ```java
 @Autowired
@@ -71,34 +71,34 @@ private ArrayList<String> array;
 
 ### **@Inject**
 
-**@Autowired 어노테이션과 비슷한 역할**을 한다.
+@Autowired 어노테이션과 비슷한 역할을 한다.
 
 ### **@Resource**
 
-**@Autowired와 마찬가지로 Bean 객체를 주입**해주는데 **차이점은 Autowired는 타입으로, Resource는 이름으로 연결**해준다.
+@Autowired와 마찬가지로 Bean 객체를 주입해주는데 차이점은 Autowired는 타입으로, Resource는 이름으로 연결해준다.
 
-**Annotation 사용으로 인해 특정 Framework에 종속적인 어플리케이션을 구성하지 않기 위해서는 @Resource를 사용할 것을 권장**한다.
+Annotation 사용으로 인해 특정 Framework에 종속적인 어플리케이션을 구성하지 않기 위해서는 @Resource를 사용할 것을 권장한다.
 
 @Resource를 사용하기 위해서는 class path 내에 jsr250-api.jar 파일을 추가해야 한다.
 
-**필드, 입력 파라미터가 한 개인 bean property setter method에 적용 가능**하다.
+필드, 입력 파라미터가 한 개인 bean property setter method에 적용 가능하다.
 
 ---
 
 ### **@Configuration**
 
-**@Configuration을 클래스에 적용**하고 **@Bean을 해당 Class의 method에 적용하면 @Autowired로 Bean을 부를 수 있다.**
+@Configuration을 클래스에 적용하고 @Bean을 해당 Class의 method에 적용하면 @Autowired로 Bean을 부를 수 있다.
 
 설정파일을 만들거나 Bean을 등록하기 위한 애노테이션이다.
 
-- **Bean을 등록할때 싱글톤(singleton)이 되도록 보장해준다.**
-- **스프링컨테이너에서 Bean을 관리할수있게 됨.**
+- Bean을 등록할때 싱글톤(singleton)이 되도록 보장해준다.
+- 스프링컨테이너에서 Bean을 관리할수있게 됨.
 
 ---
 
 ### **@Controller**
 
-**Spring의 Controller를 의미**한다. Spring MVC에서 Controller클래스에 쓰인다.
+Spring의 Controller를 의미한다. Spring MVC에서 Controller클래스에 쓰인다.
 
 Controller는 사용자가 화면(View) 단에서 입력이나 어떤 이벤트를 했을 경우, 그 이벤트에 맞는 화면(View)이나 비즈니스 로직(Model)을 실행할 수 있도록 업데이트 해주는 역할을 맡음.
 
@@ -108,34 +108,34 @@ Controller는 사용자가 화면(View) 단에서 입력이나 어떤 이벤트�
 
 ### **@RestController**
 
-**Spring에서 Controller 중 View로 응답하지 않는, Controller를 의미**한다.
+Spring에서 Controller 중 View로 응답하지 않는, Controller를 의미한다.
 
-**method의 반환 결과를 JSON 형태로 반환**한다.
+method의 반환 결과를 JSON 형태로 반환한다.
 
-**이 Annotation이 적혀있는 Controller의 method는 HttpResponse로 바로 응답이 가능**하다. **@ResponseBody 역할을 자동적으로 해주는 Annotation**이다.
+이 Annotation이 적혀있는 Controller의 method는 HttpResponse로 바로 응답이 가능하다. @ResponseBody 역할을 자동적으로 해주는 Annotation이다.
 
 @Controller + @ResponseBody를 사용하면 @ResponseBody를 모든 메소드에서 적용한다.
 
-- @Controller: **API와 view를 동시에 사용하는 경우에 사용**한다. **대신 API 서비스로 사용하는 경우는 @ResponseBody를 사용하여 객체를 반환**한다. **view(화면) return이 주목적**이다.
-- @RestController: **view가 필요없는 API만 지원하는 서비스에서 사용**한다. Spring 4.0.1부터 제공 **@RequestMapping 메서드가 기본적으로 @ResponseBody 의미를 가정**한다. **data(json, xml 등) return이 주목적**이다.
+- @Controller: API와 view를 동시에 사용하는 경우에 사용한다. 대신 API 서비스로 사용하는 경우는 @ResponseBody를 사용하여 객체를 반환한다. view(화면) return이 주목적이다.
+- @RestController: view가 필요없는 API만 지원하는 서비스에서 사용한다. Spring 4.0.1부터 제공 @RequestMapping 메서드가 기본적으로 @ResponseBody 의미를 가정한다. data(json, xml 등) return이 주목적이다.
 
 ### **@Service**
 
-**Service Class**에서 쓰인다. **비즈니스 로직을 수행하는 Class라는 것을 나타내는 용도**이다.
+**Service Class**에서 쓰인다. 비즈니스 로직을 수행하는 Class라는 것을 나타내는 용도이다.
 
 ### **@Repository**
 
-**DAO class**에서 쓰인다. **DataBase에 접근하는 method를 가지고 있는 Class에서 쓰인다.**
+**DAO class**에서 쓰인다. DataBase에 접근하는 method를 가지고 있는 Class에서 쓰인다.
 
 ---
 
 ### **@Required**
 
-**setter method에 적용해주면 Bean 생성시 필수 프로퍼티 임을 알린다.**
+setter method에 적용해주면 Bean 생성시 필수 프로퍼티 임을 알린다.
 
-**Required Annotation을 사용하여 optional 하지 않은, 꼭 필요한 속성들을 정의**한다.
+Required Annotation을 사용하여 optional 하지 않은, 꼭 필요한 속성들을 정의한다.
 
-**영향을 받는 bean property를 구성**할 시에는 **XML 설정 파일에 반드시 property를 채워야 한다.**
+영향을 받는 bean property를 구성할 시에는 XML 설정 파일에 반드시 property를 채워야 한다.
 
 ```html
 <!-- Definition for student bean -->
@@ -161,7 +161,7 @@ public void setNumber(int number){
 
 지연로딩을 지원한다.
 
-@Component나 @Bean Annotation과 같이 쓰는데 **Class가 로드될 때 스프링에서 바로 bean등록을 마치는 것이 아니라 실제로 사용될 때 로딩이 이뤄지게 하는 방법**이다.
+@Component나 @Bean Annotation과 같이 쓰는데 Class가 로드될 때 스프링에서 바로 bean등록을 마치는 것이 아니라 실제로 사용될 때 로딩이 이뤄지게 하는 방법이다.
 
 ---
 
@@ -190,13 +190,13 @@ public void setNumber(int number){
 
 ### **@RequestMapping**
 
-**요청 URL을 어떤 method가 처리할지 mapping해주는 Annotation**이다.
+요청 URL을 어떤 method가 처리할지 mapping해주는 Annotation이다.
 
 Controller나 Controller의 method에 적용한다.
 
 요청을 받는 형식인 GET, POST, PATCH, PUT, DELETE 를 정의하기도 한다.
 
-**요청 받는 형식을 정의하지 않는다면, 자동적으로 GET으로 설정**된다.
+요청 받는 형식을 정의하지 않는다면, 자동적으로 GET으로 설정된다.
 
 ```
 @RequestMapping("/list")
@@ -235,13 +235,13 @@ public class HomeController {
 
 ### **@GetMapping**
 
-**@RequestMapping(Method=RequestMethod.GET)과 같다.** @PostMapping, @PutMapping, @PatchMapping, @DeleteMapping 등 도 있다.
+@RequestMapping(Method=RequestMethod.GET)과 같다. @PostMapping, @PutMapping, @PatchMapping, @DeleteMapping 등 도 있다.
 
 ---
 
 ### **@CookieValue**
 
-**쿠키 값을 parameter로 전달 받을 수 있는 방법**이다.
+쿠키 값을 parameter로 전달 받을 수 있는 방법이다.
 
 해당 쿠키가 존재하지 않으면 400 에러를 발생시킨다.
 
@@ -256,13 +256,13 @@ public String view(@CookieValue(value="auth")String auth){...};
 
 Session에 data를 넣을 때 쓰는 Annotation이다.
 
-**@SessionAttributes("name")이라고 하면 Model에 key값이 "name"으로 있는 값은 자동으로 세션에도 저장되게 한다.**
+@SessionAttributes("name")이라고 하면 Model에 key값이 "name"으로 있는 값은 자동으로 세션에도 저장되게 한다.
 
 ### **@ModelAttribute**
 
-**view에서 전달해주는 parameter를 Class(VO/DTO)의 멤버 변수로 binding 해주는 Annotation**이다.
+view에서 전달해주는 parameter를 Class(VO/DTO)의 멤버 변수로 binding 해주는 Annotation이다.
 
-binding 기준은 <input name="id" /> 처럼 **어떤 태그의 name값이 해당 Class의 멤버 변수명과 일치해야하고 setmethod명도 일치해야한다.**
+binding 기준은 <input name="id" /> 처럼 어떤 태그의 name값이 해당 Class의 멤버 변수명과 일치해야하고 setmethod명도 일치해야한다.
 
 ```java
 class Person{
@@ -287,15 +287,15 @@ public class PersonController{
 
 ### **@Valid**
 
-**유효성 검증이 필요한 객체임을 지정**한다.
+유효성 검증이 필요한 객체임을 지정한다.
 
 @Valid로 시작하는 어노테이션이 있을 경우에 유효성 검사를 진행한다.
 
 ### **@Validated**
 
-**입력 파라미터의 유효성 검증은 컨트롤러에서 최대한 처리하고 넘겨주는 것이 좋다**. 하지만 개발을 하다보면 불가피하게 다른 곳에서 파라미터를 검증해야 할 수 있다.
+입력 파라미터의 유효성 검증은 컨트롤러에서 최대한 처리하고 넘겨주는 것이 좋다. 하지만 개발을 하다보면 불가피하게 다른 곳에서 파라미터를 검증해야 할 수 있다.
 
-Spring에서는 이를 위해 **AOP 기반으로 메소드의 요청을 가로채서 유효성 검증을 진행해주는 @Validated를 제공**하고 있다.
+Spring에서는 이를 위해 AOP 기반으로 메소드의 요청을 가로채서 유효성 검증을 진행해주는 @Validated를 제공하고 있다.
 
 다음과 같이 클래스에 @Validated를 붙여주고, 유효성을 검증할 메소드의 파라미터에 @Valid를 붙여주면 유효성 검증이 진행된다.
 
@@ -311,13 +311,13 @@ public class UserService {
 
 ### **@InitBinder**
 
-**@Valid 애노테이션으로 유효성 검증이 필요하다고 한 객체를 가져오기전에 수행해야할 method를 지정**한다.
+@Valid 애노테이션으로 유효성 검증이 필요하다고 한 객체를 가져오기전에 수행해야할 method를 지정한다.
 
 ---
 
 ### **@RequestAttribute**
 
-**Request객체에 설정되어 있는 속성 값을 가져올 수 있다.**
+Request객체에 설정되어 있는 속성 값을 가져올 수 있다.
 
 ```java
 @GetMapping("/sample")
@@ -338,13 +338,13 @@ Request의 header값을 가져올 수 있다. 메소드의 파라미터에 사�
 
 ### **@RequestBody**
 
-**요청이 온 데이터(JSON이나 XML형식)를 바로 Class나 model로 매핑하기 위한 Annotation**이다.
+요청이 온 데이터(JSON이나 XML형식)를 바로 Class나 model로 매핑하기 위한 Annotation이다.
 
-POST나 PUT, PATCH로 요청을 받을때에, **요청에서 넘어온 body 값들을 자바 타입으로 파싱**해준다.
+POST나 PUT, PATCH로 요청을 받을때에, 요청에서 넘어온 body 값들을 자바 타입으로 파싱해준다.
 
-**HTTP POST 요청에 대해 request body에 있는 request message에서 값을 얻어와 매핑한다. RequestData를 바로 Model이나 클래스로 매핑**한다.
+HTTP POST 요청에 대해 request body에 있는 request message에서 값을 얻어와 매핑한다. RequestData를 바로 Model이나 클래스로 매핑한다.
 
-이를테면 **JSON 이나 XML같은 데이터를 적절한 messageConverter로 읽을 때 사용하거나 POJO 형태의 데이터 전체로 받는 경우에 사용**한다.
+이를테면 JSON 이나 XML같은 데이터를 적절한 messageConverter로 읽을 때 사용하거나 POJO 형태의 데이터 전체로 받는 경우에 사용한다.
 
 ```java
 @RequestMapping(value = "/book", method = RequestMethod.POST)
@@ -362,7 +362,7 @@ try {
 
 ### **@RequestParam**
 
-**request의 parameter에서 가져오는 것**이다.
+request의 parameter에서 가져오는 것이다.
 
 HTTP GET 요청에 대해 매칭되는 request parameter 값이 자동으로 들어간다. url 뒤에 붙는 parameter 값을 가져올 때 사용한다.
 
@@ -412,9 +412,9 @@ public class MyRestController {
 
 ### **@ControllerAdvice**
 
-@ExceptionHandler가 하나의 클래스에 대한 것이라면, @ControllerAdvice는 모든 @Controller 즉, **전역에서 발생할 수 있는 예외를 잡아 처리해주는 annotation**이다.
+@ExceptionHandler가 하나의 클래스에 대한 것이라면, @ControllerAdvice는 모든 @Controller 즉, 전역에서 발생할 수 있는 예외를 잡아 처리해주는 annotation이다.
 
-Class 위에 ControllerAdvice를 붙이고 **어떤 예외를 잡아낼 것인지는 각 메소드 상단에 @ExceptionHandler(예외클래스명.class)를 붙여서 기술**한다.
+Class 위에 ControllerAdvice를 붙이고 어떤 예외를 잡아낼 것인지는 각 메소드 상단에 @ExceptionHandler(예외클래스명.class)를 붙여서 기술한다.
 
 ```java
 @RestControllerAdvice
@@ -438,7 +438,7 @@ public class MyAdvice {
 
 ### **@Transactional**
 
-**데이터베이스 트랜잭션을 설정하고 싶은 method에 Annotation을 적용**하면 **method 내부에서 일어나는 데이터베이스 로직**이 **전부 성공하게되거나 데이터베이스 접근중 하나라도 실패하면 다시 롤백할 수 있게 해주는 Annotation**이다.
+데이터베이스 트랜잭션을 설정하고 싶은 method에 Annotation을 적용하면 method 내부에서 일어나는 데이터베이스 로직이 전부 성공하게되거나 데이터베이스 접근중 하나라도 실패하면 다시 롤백할 수 있게 해주는 Annotation이다.
 
 @Transactional(readOnly=true, rollbackFor=Exception.class)에서 readOnly는 읽기전용임을 알리고 rollbackFor는 해당 Exception이 생기면 롤백하라는 뜻이다.
 
@@ -448,7 +448,7 @@ public class MyAdvice {
 
 메소드 내에서 Exception이 발생하면 해당 메소드에서 이루어진 모든 DB 작업을 초기화한다. save 메소드를 통해서 10개를 등록해야 하는데 5번째에서 Exception이 발생하면 앞에 저장된 4개 까지 모두 롤백
 
-정확히 얘기하면, **이미 넣은걸 롤백시키는건 아니며, 모든 처리가 정상적으로 됐을때만 DB에 커밋하며 그렇지 않은 경우엔 커밋하지 않는 것**이다.
+정확히 얘기하면, 이미 넣은걸 롤백시키는건 아니며, 모든 처리가 정상적으로 됐을때만 DB에 커밋하며 그렇지 않은 경우엔 커밋하지 않는 것이다.
 
 비지니스 로직과 트랜잭션 관리는 대부분 Service에서 관리한다.
 
@@ -458,9 +458,9 @@ public class MyAdvice {
 
 ### **@Scheduled**
 
-특정 메소드에 @Scheduled 어노테이션을 선언하면 설정한 값에 따라 주기적으로 해당 메소드를 실행시킬 수 있습니다.
+특정 메소드에 @Scheduled 어노테이션을 선언하면 설정한 값에 따라 주기적으로 해당 메소드를 실행시킬 수 있다.
 
-**정해진 시간에 실행해야하는 경우에 사용**한다.
+정해진 시간에 실행해야하는 경우에 사용한다.
 
 ```java
 @Scheduled(cron = "0 0 07 * * ?")

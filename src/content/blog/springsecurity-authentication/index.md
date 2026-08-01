@@ -10,7 +10,7 @@ draft: false
 #### **Authentication (인증)의 기본 구조**
 
 - 필터들 중에 일부 필터는 인증 정보에 관여한다.
-- 이들 필터가 하는 일은 AuthenticationManager 를 통해 Authentication 을 인증하고 그 결과를 SecurityContextHolder 에 넣어주는 일입니다.
+- 이들 필터가 하는 일은 AuthenticationManager 를 통해 Authentication 을 인증하고 그 결과를 SecurityContextHolder 에 넣어주는 일이다.
 
 ![Authentication (인증)의 기본 구조](./authentication-1.png)
 

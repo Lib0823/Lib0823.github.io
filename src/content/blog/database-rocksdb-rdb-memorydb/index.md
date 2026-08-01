@@ -30,7 +30,7 @@ draft: false
 | **Memory DB** | Redis, Memcached | 초고속, 휘발성(기본), 메모리 한계 |
 | **RocksDB** | RocksDB | 빠른 쓰기, 디스크 영속성, Key-Value |
 
-RocksDB는 **Redis처럼 빠르지만, PostgreSQL처럼 디스크에 저장**된다.
+RocksDB는 Redis처럼 빠르지만, PostgreSQL처럼 디스크에 저장된다.
 
 2013년 Facebook이 내부 스토리지 엔진으로 개발했고, 현재는 오픈소스로 공개되어
 
@@ -126,11 +126,11 @@ RocksDB Instance
 
 각 CF는 독립적인 MemTable, SSTable을 가지므로
 
-**데이터 특성에 따라 설정을 다르게 줄 수 있다.**
+데이터 특성에 따라 설정을 다르게 줄 수 있다.
 
 ![https://github.com/facebook/rocksdb](./image-1.png)
 
-> <u>RocksDB의 계층 구조는 우연이 아니라 **하드웨어 설계 원칙을 의도적으로 소프트웨어에 적용**한 것이다.</u>
+> <u>RocksDB의 계층 구조는 우연이 아니라 하드웨어 설계 원칙을 의도적으로 소프트웨어에 적용한 것이다.</u>
 >
 > **CPU 데이터 탐색** : Register → L1 → L2 → L3 Cache → RAM → Disk
 >
@@ -377,7 +377,7 @@ public class EventLogService {
 ### ✅ RocksDB를 선택할 때
 
 - 초당 수만 건 이상의 **대량 쓰기**가 필요할 때
-- 데이터가 너무 커서 **Redis 메모리에 다 올릴 수 없을 때**
+- 데이터가 너무 커서 Redis 메모리에 다 올릴 수 없을 때
 - **디스크에 영속** 저장해야 하지만 SQL은 필요 없을 때
 - Kafka, TiDB처럼 **내부 스토리지 엔진**으로 쓸 때
 

@@ -9,7 +9,7 @@ draft: false
 
 ![에러 노트](./image-1.png)
 
-### SpringBoot 개발 중 발생한 에러를 정리하는 곳입니다.
+### SpringBoot 개발 중 발생한 에러를 정리하는 곳이다.
 
 #### Mybatis Mapping 에러
 

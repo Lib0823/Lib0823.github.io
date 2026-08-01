@@ -51,7 +51,7 @@ draft: false
 1. 데이터 값을 따로 백업 해둘 때 사용
 2. 값이 삽입되거나 수정될 때 최종 시간 업데이트
 
-#### **데이터 생성, 수정 시간 업데이트는 SpringBoot에서 어노테이션 지원.**
+#### 데이터 생성, 수정 시간 업데이트는 SpringBoot에서 어노테이션 지원.
 
 1. SpringBootApplication 클래스에 **@EnableJpaAuditing** 지정
 2. 해당 Entity클래스에 **@EntityListeners(value=AuditingEntityListener.class)** 지정

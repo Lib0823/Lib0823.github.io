@@ -1,6 +1,6 @@
 ---
 title: 'Bean & POJO (Plain Old Java Object)'
-description: '스프링 컨테이너(IoC)에 의해 관리되는 자바 객체(POJO)를 빈(Bean)이라고 합니다.'
+description: '스프링 컨테이너(IoC)에 의해 관리되는 자바 객체(POJO)를 빈(Bean)이라고 한다.'
 date: 2023-08-19
 category: 'Backend'
 tags: ['Spring', 'pojo', 'bean']
@@ -9,7 +9,7 @@ draft: false
 
 #### **스프링 빈이란?**
 
-**스프링 컨테이너(IoC)에 의해 관리되는 자바 객체(POJO)**를 빈(Bean)이라고 합니다.
+스프링 컨테이너(IoC)에 의해 관리되는 자바 객체(POJO)를 빈(Bean)이라고 한다.
 
 - 스프링 컨테이너는 스프링 빈의 생명 주기를 관리하며, 생성된 스프링 빈들에게 추가적인 기능을 제공하는 역할을 한다. IoC와 DI의 원리가 스프링 컨테이너에 적용된다.
 
@@ -33,15 +33,15 @@ draft: false
 #### **@Bean vs @Component**
 
 - @Bean
-  - 개발자가 컨트롤이 불가능한 **외부 라이브러리들을 Bean으로 등록하고 싶은 경우**에 사용된다.
+  - 개발자가 컨트롤이 불가능한 외부 라이브러리들을 Bean으로 등록하고 싶은 경우에 사용된다.
   - 메소드 또는 어노테이션 단위에 붙일 수 있다.
 - @Component
-  - 개발자가 **직접 컨트롤이 가능한 클래스들의 경우**에 사용된다.
+  - 개발자가 직접 컨트롤이 가능한 클래스들의 경우에 사용된다.
   - 클래스 또는 인터페이스 단위에 붙일 수 있다.
 
 #### POJO (Plain Old Java Object)
 
-**POJO**란 Plain Old Java Object의 약자로 다른 클래스나 인터페이스를 상속/implements 받아 메서드가 추가된 클래스가 아닌 **일반적으로 우리가 알고 있는 getter, setter 같이 기본적인 기능만 가진 자바 객체**를 말한다.
+**POJO**란 Plain Old Java Object의 약자로 다른 클래스나 인터페이스를 상속/implements 받아 메서드가 추가된 클래스가 아닌 일반적으로 우리가 알고 있는 getter, setter 같이 기본적인 기능만 가진 자바 객체를 말한다.
 
 ```java
 public class User {

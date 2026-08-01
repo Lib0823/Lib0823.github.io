@@ -79,7 +79,7 @@ public void testMyBatis() {
 
 **4. XML Mapper**
 
-- Mapper는 쉽게 말해 SQL과 그에 대한 처리를 지정하는 역할을 합니다.
+- Mapper는 쉽게 말해 SQL과 그에 대한 처리를 지정하는 역할을 한다.
 
 ```xml
 <?xml version="1.0" encoding="UTF-8" ?>

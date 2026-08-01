@@ -109,7 +109,7 @@ Web Application의 에러 처리 방법
 
 1. **에러 페이지**
 2. **4xx Error / 5xx Error**
-3. **Client가 200외에 처리 하지 못할 경우 200을 내려주고 별도의 에러 Message전달**
+3. Client가 200외에 처리 하지 못할 경우 200을 내려주고 별도의 에러 Message전달
 
 **@ControllerAdvice**
 

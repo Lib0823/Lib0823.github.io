@@ -98,7 +98,7 @@ rproxy1
 
 **1. VhostName = "vhost1"**
 
-- Reverse Proxy가 처리할 가상 호스트 이름을 지정합니다. 그냥 원하는 이름을 지정하면 된다.
+- Reverse Proxy가 처리할 가상 호스트 이름을 지정한다. 그냥 원하는 이름을 지정하면 된다.
 
 **2. PathPrefix = "/before/"**
 
@@ -118,7 +118,7 @@ rproxy1
 
 **6. HtmlUrl = "a href"**
 
-- HTML 문서에서 `<a>` 태그의 href 속성에 포함된 URL을 대상으로 재작성 규칙을 적용합니다. 이 설정은 HTML 파일의 링크 URL을 재작성할 때 사용된다.
+- HTML 문서에서 `<a>` 태그의 href 속성에 포함된 URL을 대상으로 재작성 규칙을 적용한다. 이 설정은 HTML 파일의 링크 URL을 재작성할 때 사용된다.
 - 사용 예시) img src, link href, script src ..
 
 #### REVERSE\_PROXY

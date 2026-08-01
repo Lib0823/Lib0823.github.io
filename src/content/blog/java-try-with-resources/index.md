@@ -63,7 +63,7 @@ try {
 
 여기서 눈여겨볼 부분은 **예외가 겹치는 경우**다. try 블록에서 예외가 발생했는데, 그 뒤 자동으로 호출되는 `close()`에서도 예외가 발생하면 어떻게 될까?
 
-- try-with-resources는 **원래 발생한 예외(primary exception)를 그대로 던지고**, close()에서 발생한 예외는 그 안에 **suppressed exception**으로 붙여서 함께 전달한다.
+- try-with-resources는 원래 발생한 예외(primary exception)를 그대로 던지고, close()에서 발생한 예외는 그 안에 **suppressed exception**으로 붙여서 함께 전달한다.
 - 두 예외 정보를 다 보고 싶다면 `e.getSuppressed()`로 확인할 수 있다.
 
 ```java
@@ -97,4 +97,4 @@ try {
 }
 ```
 
-이 방식의 가장 큰 문제는, `finally`의 `close()`에서 예외가 나면 **본문에서 발생한 원래 예외가 묻혀버리거나(catch로 잡히지 못하고) 덮어써질 수 있다**는 것이다. try-with-resources는 이 문제를 suppressed exception으로 해결해서, 자원 정리 코드를 직접 짤 때보다 예외 처리가 훨씬 안전하고 코드도 짧아진다.
+이 방식의 가장 큰 문제는, `finally`의 `close()`에서 예외가 나면 본문에서 발생한 원래 예외가 묻혀버리거나(catch로 잡히지 못하고) 덮어써질 수 있다는 것이다. try-with-resources는 이 문제를 suppressed exception으로 해결해서, 자원 정리 코드를 직접 짤 때보다 예외 처리가 훨씬 안전하고 코드도 짧아진다.

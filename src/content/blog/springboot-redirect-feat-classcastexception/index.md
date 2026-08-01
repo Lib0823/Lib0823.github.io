@@ -101,7 +101,7 @@ Spring에서 Redirection은 클라이언트에게 새로운 URL로 이동하라�
 
 **※주의사항**
 
-> **@RestController나 @ResponseBody가 붙은 메서드를 호출 시 Redirect처리를 하면 dispatcherservlet에서 반환타입이 String이 아니라 ClassCastException발생한다.**
+> @RestController나 @ResponseBody가 붙은 메서드를 호출 시 Redirect처리를 하면 dispatcherservlet에서 반환타입이 String이 아니라 ClassCastException발생한다.
 
 **# 결과 (해결 방법)**
 

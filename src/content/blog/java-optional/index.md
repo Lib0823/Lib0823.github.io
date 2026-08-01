@@ -28,7 +28,7 @@ Optional<String> optionalWithNull = Optional.ofNullable(null);
 
 #### **2. 값의 존재 여부 확인 :**
 
-**isPresent(): 값이 존재하는지 여부를 확인.**
+**isPresent():** 값이 존재하는지 여부를 확인.
 
 ```
 Optional<String> optional = Optional.of("Hello");

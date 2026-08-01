@@ -60,7 +60,7 @@ List<Integer> redHeavyAppleUid = appleList.stream()
 
 ### Intermediate Operations (중간 연산)
 
-- filter(predicate): 조건에 맞는 요소를 선택합니다.
+- filter(predicate): 조건에 맞는 요소를 선택한다.
 
 ```
 List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
@@ -70,7 +70,7 @@ List<Integer> evenNumbers = numbers.stream()
 // 결과: [2, 4, 6, 8, 10]
 ```
 
-- map(function): 요소들을 변환합니다.
+- map(function): 요소들을 변환한다.
 
 ```
 List<String> names = Arrays.asList("Alice", "Bob", "Charlie");
@@ -80,7 +80,7 @@ List<Integer> nameLengths = names.stream()
 // 결과: [5, 3, 7]
 ```
 
-- sorted(): 요소들을 기본 정렬 순서에 따라 정렬합니다.
+- sorted(): 요소들을 기본 정렬 순서에 따라 정렬한다.
 
 ```
 List<Integer> numbers = Arrays.asList(5, 3, 8, 1, 2);
@@ -90,7 +90,7 @@ List<Integer> sortedNumbers = numbers.stream()
 // 결과: [1, 2, 3, 5, 8]
 ```
 
-- distinct(): 중복된 요소를 제거합니다.
+- distinct(): 중복된 요소를 제거한다.
 
 ```
 List<Integer> numbers = Arrays.asList(1, 2, 3, 2, 4, 3, 5);
@@ -100,7 +100,7 @@ List<Integer> distinctNumbers = numbers.stream()
 // 결과: [1, 2, 3, 4, 5]
 ```
 
-- limit(n): 처음부터 n개의 요소로 제한합니다.
+- limit(n): 처음부터 n개의 요소로 제한한다.
 
 ```
 List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5);
@@ -110,7 +110,7 @@ List<Integer> limitedNumbers = numbers.stream()
 // 결과: [1, 2, 3]
 ```
 
-- skip(n): 처음 n개의 요소를 건너뛴 후 남은 요소들로 구성합니다.
+- skip(n): 처음 n개의 요소를 건너뛴 후 남은 요소들로 구성한다.
 
 ```
 List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5);
@@ -122,7 +122,7 @@ List<Integer> skippedNumbers = numbers.stream()
 
 ### Terminal Operations (최종 연산)
 
-- forEach(consumer): 각 요소를 소비하면서 작업을 수행합니다. - print
+- forEach(consumer): 각 요소를 소비하면서 작업을 수행한다. - print
 
 ```
 List<String> names = Arrays.asList("Alice", "Bob", "Charlie");
@@ -133,7 +133,7 @@ names.stream()
 //       Charlie
 ```
 
-- collect(collector): 요소들을 수집하여 결과를 반환합니다. - list
+- collect(collector): 요소들을 수집하여 결과를 반환한다. - list
 
 ```
 List<String> names = Arrays.asList("Alice", "Bob", "Charlie");
@@ -144,7 +144,7 @@ List<String> collectedNames = names.stream()
 
 ---
 
-> **Stream을 사용할 때 <u>직렬</u>로 처리할 것인지 <u>병렬</u>로 처리할 것인지 지정할 수 있다!**
+> Stream을 사용할 때 <u>직렬</u>로 처리할 것인지 <u>병렬</u>로 처리할 것인지 지정할 수 있다!
 > 다만, 병렬 처리는 멀티스레딩으로 동작하므로 스레드 간 동기화 문제를 방지하기 위해 안전한 자료구조 및 작업을 선택하고, 명시적인 동기화가 필요한 경우에는 적절한 방법으로 처리해야 한다.
 
 ```

@@ -13,7 +13,7 @@ draft: false
 
 우선 EC2 서버가 갑자기 다운되는 상황은 자원 부족, 예외 처리 미흡, 서버 설정 문제 등 이 외에도 매우 다양한 원인들로 인해 갑작스럽게 돌연사 해버릴 수 있는 개복치 같은 서버의 사망 원인을 파악하기 위해서는 가장 쉬우면서도 중요한 서버의 로그를 확인해보면 서버의 상태나 죽었다면 죽은 이유를 파악할 수 있다.
 
-**서버가 이런 로그를 계속하여 뱉어냈다면 이 글에서 다루는 쓰레드 기아 문제이다.**
+서버가 이런 로그를 계속하여 뱉어냈다면 이 글에서 다루는 쓰레드 기아 문제이다.
 
 ```
 WARN 23318 --- [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=???)
@@ -33,7 +33,7 @@ Thread starvation or clock leap detected 이 에러는 **결론**부터 말하�
 
 ### 원인 및 해결 방법
 
-> 결론적으로 원인은 Thread가 작업 중 Connection을 정상적으로 할당 받지 못해 발생하는 문제이기 때문에 **Connection 개수를 충분히 늘려주면 된다.!**
+> 결론적으로 원인은 Thread가 작업 중 Connection을 정상적으로 할당 받지 못해 발생하는 문제이기 때문에 Connection 개수를 충분히 늘려주면 된다.!
 
 HikariCP에서 제공하는 최적의 Maximum Pool Size를 구하는 공식은 *Tn \* (Cn - 1) + 1*라고 한다.
 

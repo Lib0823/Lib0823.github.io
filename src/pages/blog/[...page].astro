@@ -17,6 +17,15 @@ export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
 
 const { page } = Astro.props;
 const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+
+const dateFormatter = new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' });
+
+const isFirstPage = page.currentPage === 1;
+const featuredPost = isFirstPage ? page.data[0] : undefined;
+const gridPosts = isFirstPage ? page.data.slice(1) : page.data;
+
+const categoryCount = new Set(allPosts.map((p) => p.data.category)).size;
+const earliestYear = Math.min(...allPosts.map((p) => p.data.date.getFullYear()));
 ---
 
 <BaseLayout title="Blog" description="Java 백엔드, 인프라, AI 관련 기술 기록.">
@@ -33,21 +42,168 @@ const allPosts = await getCollection('blog', ({ data }) => !data.draft);
       </div>
       <h1 class="page-title">기술 블로그</h1>
       <p class="text-muted page-lead">Backend, Language, Database, Infrastructure, AI 주제로 작성한 기술 기록입니다.</p>
+      <div class="page-stats text-muted">
+        <span>{allPosts.length}개의 글</span>
+        <span aria-hidden="true">·</span>
+        <span>{categoryCount}개 카테고리</span>
+        <span aria-hidden="true">·</span>
+        <span>{earliestYear}년부터 기록</span>
+      </div>
+
+      {featuredPost && (
+        <a class="featured-post" href={`/blog/${featuredPost.id}/`}>
+          <div class="featured-post-body">
+            <span class="featured-post-label">
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M13 2 3 14h9l-1 8 10-12h-9l1-8Z" />
+              </svg>
+              최신 글
+            </span>
+            <span class="badge featured-post-category">{featuredPost.data.category}</span>
+            <h2 class="featured-post-title">{featuredPost.data.title}</h2>
+            <p class="featured-post-description text-muted">{featuredPost.data.description}</p>
+            <time class="featured-post-date text-muted" datetime={featuredPost.data.date.toISOString()}>
+              {dateFormatter.format(featuredPost.data.date)}
+            </time>
+          </div>
+        </a>
+      )}
 
       <PagefindConfig instance="blog-search" />
       <div class="search-box">
         <pagefind-searchbox instance="blog-search" placeholder="글 제목, 내용으로 검색"></pagefind-searchbox>
       </div>
-      <pagefind-results instance="blog-search"></pagefind-results>
 
       <BlogFilterNav posts={allPosts} />
 
-      <PostGrid posts={page.data} />
+      <PostGrid posts={gridPosts} />
 
-      <Pagination page={page} />
+      <Pagination page={page} basePath="/blog" />
     </div>
   </section>
 </BaseLayout>
+
+<script>
+  const searchInput = document.querySelector<HTMLInputElement>('.pf-searchbox-input');
+  const grid = document.querySelector<HTMLElement>('[data-post-grid]');
+  const resultCountEl = document.querySelector<HTMLElement>('.result-count');
+  const featuredPost = document.querySelector<HTMLElement>('.featured-post');
+  const filterRow = document.querySelector<HTMLElement>('.filter-row');
+  const paginationNav = document.querySelector<HTMLElement>('.pagination');
+
+  if (searchInput && grid && filterRow) {
+    const originalGridHTML = grid.innerHTML;
+    const originalResultCountText = resultCountEl?.textContent ?? '';
+    const originalCounts = new Map<HTMLElement, string>();
+    filterRow.querySelectorAll<HTMLElement>('.filter-btn').forEach((btn) => {
+      const countEl = btn.querySelector('.count');
+      if (countEl) originalCounts.set(btn, countEl.textContent ?? '');
+    });
+
+    const dateFormatter = new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' });
+    let pagefind: any;
+    let activeCategory: string | null = null;
+
+    async function ensurePagefind() {
+      if (!pagefind) {
+        const pagefindPath = '/pagefind/pagefind.js';
+        pagefind = await import(pagefindPath);
+        await pagefind.init();
+        await pagefind.filters();
+      }
+      return pagefind;
+    }
+
+    function escapeHTML(value: string) {
+      const div = document.createElement('div');
+      div.textContent = value;
+      return div.innerHTML;
+    }
+
+    function renderCard(data: any) {
+      const dateText = data.meta?.date ? dateFormatter.format(new Date(data.meta.date)) : '';
+      return `
+        <a class="card post-card" href="${data.url}">
+          <span class="badge">${escapeHTML(data.meta?.category ?? '')}</span>
+          <h2>${escapeHTML(data.meta?.title ?? '')}</h2>
+          <p class="text-muted">${escapeHTML(data.meta?.description ?? '')}</p>
+          <time class="text-muted">${dateText}</time>
+        </a>
+      `;
+    }
+
+    function restoreOriginal() {
+      grid!.innerHTML = originalGridHTML;
+      if (resultCountEl) resultCountEl.textContent = originalResultCountText;
+      if (featuredPost) featuredPost.style.display = '';
+      if (paginationNav) paginationNav.style.display = '';
+      originalCounts.forEach((text, btn) => {
+        const countEl = btn.querySelector('.count');
+        if (countEl) countEl.textContent = text;
+        btn.classList.remove('filter-empty');
+        btn.classList.toggle('active', btn.dataset.categoryLabel === '__all__');
+      });
+    }
+
+    function renderSearch(search: any, dataList: any[]) {
+      grid!.innerHTML =
+        dataList.length > 0
+          ? dataList.map(renderCard).join('')
+          : '<p class="text-muted search-empty-msg">검색 결과가 없습니다.</p>';
+
+      if (resultCountEl) resultCountEl.textContent = `${dataList.length}개의 글 (검색 결과)`;
+      if (featuredPost) featuredPost.style.display = 'none';
+      if (paginationNav) paginationNav.style.display = 'none';
+
+      const categoryCounts: Record<string, number> = search.filters?.category ?? {};
+      filterRow!.querySelectorAll<HTMLElement>('.filter-btn').forEach((btn) => {
+        const label = btn.dataset.categoryLabel;
+        const countEl = btn.querySelector('.count');
+        if (label === '__all__') {
+          if (countEl) countEl.textContent = String(dataList.length);
+          btn.classList.toggle('active', !activeCategory);
+          btn.classList.remove('filter-empty');
+          return;
+        }
+        const count = (label && categoryCounts[label]) ?? 0;
+        if (countEl) countEl.textContent = String(count);
+        btn.classList.toggle('filter-empty', count === 0);
+        btn.classList.toggle('active', activeCategory === label);
+      });
+    }
+
+    async function runSearch(query: string) {
+      const pf = await ensurePagefind();
+      const options = activeCategory ? { filters: { category: activeCategory } } : undefined;
+      const search = await pf.debouncedSearch(query, options, 150);
+      if (!search) return; // superseded by a newer keystroke
+      const dataList = await Promise.all(search.results.map((r: any) => r.data()));
+      renderSearch(search, dataList);
+    }
+
+    searchInput.addEventListener('input', () => {
+      const query = searchInput.value.trim();
+      if (!query) {
+        activeCategory = null;
+        restoreOriginal();
+        return;
+      }
+      runSearch(query);
+    });
+
+    filterRow.addEventListener('click', (event) => {
+      const btn = (event.target as HTMLElement).closest<HTMLElement>('.filter-btn');
+      if (!btn) return;
+      const query = searchInput.value.trim();
+      if (!query) return; // no active search: let normal navigation happen
+
+      event.preventDefault();
+      const label = btn.dataset.categoryLabel ?? null;
+      activeCategory = !label || label === '__all__' || activeCategory === label ? null : label;
+      runSearch(query);
+    });
+  }
+</script>
 
 <style>
   .page-title {
@@ -60,15 +216,102 @@ const allPosts = await getCollection('blog', ({ data }) => !data.draft);
     max-width: 640px;
   }
 
+  .page-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+    font-size: 0.88rem;
+    font-weight: 600;
+  }
+
   .search-box {
     margin-top: 28px;
     max-width: 480px;
   }
+
+  .search-empty-msg {
+    grid-column: 1 / -1;
+    padding: 32px 0;
+    text-align: center;
+  }
+
+  .featured-post {
+    display: block;
+    position: relative;
+    overflow: hidden;
+    margin-top: 24px;
+    padding: 20px clamp(16px, 3vw, 28px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--bg-soft);
+    transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+  }
+
+  .featured-post::before {
+    content: '';
+    position: absolute;
+    top: -40%;
+    right: -10%;
+    width: min(280px, 40vw);
+    height: min(280px, 40vw);
+    background: radial-gradient(circle, var(--accent-soft) 0%, transparent 72%);
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  .featured-post:hover {
+    border-color: var(--accent);
+    box-shadow: var(--shadow);
+    transform: translateY(-2px);
+  }
+
+  .featured-post-body {
+    position: relative;
+    max-width: 640px;
+  }
+
+  .featured-post-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.74rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+  }
+
+  .featured-post-category {
+    display: block;
+    width: fit-content;
+    margin-top: 10px;
+  }
+
+  .featured-post-title {
+    font-size: clamp(1.05rem, 2.2vw, 1.3rem);
+    margin-top: 8px;
+  }
+
+  .featured-post-description {
+    margin-top: 6px;
+    font-size: 0.9rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+  }
+
+  .featured-post-date {
+    display: block;
+    margin-top: 10px;
+    font-size: 0.8rem;
+  }
 </style>
 
 <style is:global>
-  .search-box,
-  pagefind-results {
+  .search-box {
     --pf-text: var(--text);
     --pf-text-secondary: var(--text-muted);
     --pf-text-muted: var(--text-faint);
@@ -81,10 +324,5 @@ const allPosts = await getCollection('blog', ({ data }) => !data.draft);
     --pf-font: var(--font-sans);
     --pf-border-radius: var(--radius-sm);
     --pf-shadow-md: var(--shadow);
-  }
-
-  pagefind-results {
-    display: block;
-    margin-top: 12px;
   }
 </style>

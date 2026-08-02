@@ -4,9 +4,30 @@ import type { CollectionEntry } from 'astro:content';
 
 interface Props {
   page: Page<CollectionEntry<'blog'>>;
+  basePath: string;
 }
 
-const { page } = Astro.props;
+const { page, basePath } = Astro.props;
+
+function pageHref(n: number) {
+  return n === 1 ? `${basePath}/` : `${basePath}/${n}`;
+}
+
+function getPageNumbers(current: number, last: number): (number | 'ellipsis')[] {
+  const delta = 1;
+  const items: (number | 'ellipsis')[] = [1];
+  const start = Math.max(2, current - delta);
+  const end = Math.min(last - 1, current + delta);
+
+  if (start > 2) items.push('ellipsis');
+  for (let i = start; i <= end; i++) items.push(i);
+  if (end < last - 1) items.push('ellipsis');
+  if (last > 1) items.push(last);
+
+  return items;
+}
+
+const pageNumbers = page.lastPage > 1 ? getPageNumbers(page.currentPage, page.lastPage) : [];
 ---
 
 {page.lastPage > 1 && (
@@ -16,7 +37,23 @@ const { page } = Astro.props;
     ) : (
       <span class="btn btn-disabled" aria-disabled="true">← 이전</span>
     )}
-    <span class="pagination-status text-muted">{page.currentPage} / {page.lastPage}</span>
+
+    <div class="pagination-numbers">
+      {pageNumbers.map((n) =>
+        n === 'ellipsis' ? (
+          <span class="pagination-ellipsis text-muted">…</span>
+        ) : (
+          <a
+            class={`pagination-number ${n === page.currentPage ? 'active' : ''}`}
+            href={pageHref(n)}
+            aria-current={n === page.currentPage ? 'page' : undefined}
+          >
+            {n}
+          </a>
+        ),
+      )}
+    </div>
+
     {page.url.next ? (
       <a class="btn" href={page.url.next}>다음 →</a>
     ) : (
@@ -30,13 +67,44 @@ const { page } = Astro.props;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 20px;
+    flex-wrap: wrap;
+    gap: 12px;
     margin-top: 48px;
   }
 
-  .pagination-status {
-    font-size: 0.9rem;
+  .pagination-numbers {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .pagination-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 34px;
+    height: 34px;
+    padding-inline: 6px;
+    border-radius: 999px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text-muted);
     font-variant-numeric: tabular-nums;
+    transition: all 0.15s ease;
+  }
+
+  .pagination-number:hover {
+    color: var(--accent);
+  }
+
+  .pagination-number.active {
+    background: var(--text);
+    color: var(--bg);
+  }
+
+  .pagination-ellipsis {
+    padding-inline: 4px;
+    font-size: 0.88rem;
   }
 
   .btn-disabled {

@@ -12,6 +12,17 @@ const { posts, activeCategorySlug, activeTagSlug } = Astro.props;
 
 const categoryOrder = ['Backend', 'Language', 'Database', 'Infrastructure', 'AI'];
 
+const categoryIcons: Record<string, string> = {
+  Backend:
+    '<rect x="3" y="4" width="18" height="6" rx="1.5" /><rect x="3" y="14" width="18" height="6" rx="1.5" /><path d="M7 7h.01M7 17h.01" />',
+  Language: '<polyline points="8 6 2 12 8 18" /><polyline points="16 6 22 12 16 18" />',
+  Database:
+    '<ellipse cx="12" cy="5" rx="8" ry="3" /><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5" /><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3" />',
+  Infrastructure:
+    '<polygon points="12 3 3 8 12 13 21 8 12 3" /><polyline points="3 16 12 21 21 16" /><polyline points="3 12 12 17 21 12" />',
+  AI: '<path d="M12 3v4M12 17v4M5 12h4M15 12h4M7.5 7.5l2 2M14.5 14.5l2 2M16.5 7.5l-2 2M9.5 14.5l-2 2" />',
+};
+
 const categoryCounts = new Map<string, number>();
 for (const post of posts) {
   categoryCounts.set(post.data.category, (categoryCounts.get(post.data.category) ?? 0) + 1);
@@ -44,7 +55,7 @@ const hasMoreTags = allTags.length > tags.length;
 
 <div class="blog-filters">
   <div class="filter-row">
-    <a class={`filter-btn ${!activeCategorySlug ? 'active' : ''}`} href="/blog/">
+    <a class={`filter-btn ${!activeCategorySlug ? 'active' : ''}`} href="/blog/" data-category-label="__all__">
       All <span class="count">{posts.length}</span>
     </a>
     {categoryOrder
@@ -53,7 +64,9 @@ const hasMoreTags = allTags.length > tags.length;
         <a
           class={`filter-btn ${activeCategorySlug === slugify(category) ? 'active' : ''}`}
           href={`/blog/category/${slugify(category)}/`}
+          data-category-label={category}
         >
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={categoryIcons[category]} />
           {category} <span class="count">{categoryCounts.get(category)}</span>
         </a>
       ))}
@@ -88,6 +101,9 @@ const hasMoreTags = allTags.length > tags.length;
   }
 
   .filter-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     padding: 8px 16px;
     border-radius: 999px;
     border: 1px solid var(--border);
@@ -95,6 +111,10 @@ const hasMoreTags = allTags.length > tags.length;
     font-weight: 600;
     color: var(--text-muted);
     transition: all 0.15s ease;
+  }
+
+  .filter-btn svg {
+    flex-shrink: 0;
   }
 
   .filter-btn:hover {
@@ -111,6 +131,10 @@ const hasMoreTags = allTags.length > tags.length;
   .filter-btn .count {
     opacity: 0.7;
     font-size: 0.85em;
+  }
+
+  .filter-btn.filter-empty {
+    opacity: 0.4;
   }
 
   .tag-cloud {

@@ -50,12 +50,19 @@ const relatedPosts = orderedPosts
       <div class="post-main container-prose">
         <a class="back-link text-muted" href="/blog/">← 목록으로</a>
 
-        <a class="badge" href={`/blog/category/${slugify(post.data.category)}/`}>{post.data.category}</a>
+        <a
+          class="badge"
+          href={`/blog/category/${slugify(post.data.category)}/`}
+          data-pagefind-filter="category"
+          data-pagefind-meta="category"
+        >
+          {post.data.category}
+        </a>
         <h1 class="post-title">{post.data.title}</h1>
-        <p class="post-description text-muted">{post.data.description}</p>
+        <p class="post-description text-muted" data-pagefind-meta="description">{post.data.description}</p>
 
         <div class="post-meta">
-          <time datetime={post.data.date.toISOString()}>{dateFormatter.format(post.data.date)}</time>
+          <time datetime={post.data.date.toISOString()} data-pagefind-meta="date[datetime]">{dateFormatter.format(post.data.date)}</time>
           <span class="text-muted">·</span>
           <span class="text-muted">약 {readingMinutes}분 소요</span>
           <div class="tag-row">

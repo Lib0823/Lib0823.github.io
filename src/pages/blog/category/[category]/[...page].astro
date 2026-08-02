@@ -45,7 +45,7 @@ const allPosts = await getCollection('blog', ({ data }) => !data.draft);
 
       <PostGrid posts={page.data} />
 
-      <Pagination page={page} />
+      <Pagination page={page} basePath={`/blog/category/${slugify(categoryLabel)}`} />
     </div>
   </section>
 </BaseLayout>

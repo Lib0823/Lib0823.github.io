@@ -22,6 +22,7 @@ const research = defineCollection({
       title: z.string(),
       summary: z.string(),
       status: z.enum(['in-progress', 'completed', 'planned']),
+      phase: z.string().optional(),
       period: z.string(),
       tags: z.array(z.string()).default([]),
       repo: z.string().url().optional(),

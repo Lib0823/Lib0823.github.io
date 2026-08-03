@@ -22,7 +22,7 @@ const statusLabel = {
         {projects.map((project) => (
           <a class="card project-card" href={`/research/projects/${project.id}/`}>
             <div class="project-card-head">
-              <span class="badge">{statusLabel[project.data.status]}</span>
+              <span class="badge">{project.data.phase ?? statusLabel[project.data.status]}</span>
               <span class="text-muted period">{project.data.period}</span>
             </div>
             <h2>{project.data.title}</h2>

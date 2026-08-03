@@ -26,7 +26,7 @@ const statusLabel = {
       <a class="back-link text-muted" href="/research/projects/">← 프로젝트 목록으로</a>
 
       <div class="project-head-tags">
-        <span class="badge">{statusLabel[project.data.status]}</span>
+        <span class="badge">{project.data.phase ?? statusLabel[project.data.status]}</span>
         <span class="badge badge-outline">{project.data.period}</span>
       </div>
 

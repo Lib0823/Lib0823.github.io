@@ -71,7 +71,8 @@ const statusLabel = {
       <div class="grid grid-2">
         {currentResearch.map((project) => (
           <a class="card research-card" href={`/research/projects/${project.id}/`}>
-            <span class="badge">{project.data.period}</span>
+            <span class="badge">{project.data.phase ?? statusLabel[project.data.status]}</span>
+            <span class="text-muted research-card-period">{project.data.period}</span>
             <h3>{project.data.title}</h3>
             <p class="text-muted">{project.data.summary}</p>
           </a>
@@ -90,7 +91,7 @@ const statusLabel = {
             <span class="timeline-period text-muted">{project.data.period}</span>
             <div>
               <h3>{project.data.title}</h3>
-              <span class="badge badge-outline">{statusLabel[project.data.status]}</span>
+              <span class="badge badge-outline">{project.data.phase ?? statusLabel[project.data.status]}</span>
             </div>
           </li>
         ))}
@@ -138,6 +139,12 @@ const statusLabel = {
   .goal-text {
     margin-top: 20px;
     max-width: 480px;
+  }
+
+  .research-card-period {
+    display: inline-block;
+    margin-left: 8px;
+    font-size: 0.85rem;
   }
 
   .research-card h3 {

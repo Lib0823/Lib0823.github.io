@@ -30,6 +30,20 @@ const research = defineCollection({
     }),
 });
 
+const project = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/project' }),
+  schema: () =>
+    z.object({
+      title: z.string(),
+      summary: z.string(),
+      period: z.string(),
+      stack: z.array(z.string()).default([]),
+      tags: z.array(z.string()).default([]),
+      repo: z.string().url().optional(),
+      order: z.number().default(0),
+    }),
+});
+
 const publications = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/publications' }),
   schema: () =>
@@ -43,4 +57,4 @@ const publications = defineCollection({
     }),
 });
 
-export const collections = { blog, research, publications };
+export const collections = { blog, research, publications, project };

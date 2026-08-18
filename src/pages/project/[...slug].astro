@@ -1,0 +1,126 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('project');
+  return projects.map((project) => ({
+    params: { slug: project.id },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+---
+
+<BaseLayout title={project.data.title} description={project.data.summary}>
+  <article class="section">
+    <div class="container-prose">
+      <a class="back-link text-muted" href="/project/">← 프로젝트 목록으로</a>
+
+      <div class="project-head-tags">
+        <span class="badge badge-outline">{project.data.period}</span>
+      </div>
+
+      <h1 class="project-title">{project.data.title}</h1>
+      <p class="project-summary text-muted">{project.data.summary}</p>
+
+      <div class="tag-row project-tags">
+        {project.data.stack.map((tech) => (
+          <span class="badge">{tech}</span>
+        ))}
+        {project.data.tags.map((tag) => (
+          <span class="badge badge-outline">{tag}</span>
+        ))}
+      </div>
+
+      {project.data.repo && (
+        <a class="btn" href={project.data.repo} target="_blank" rel="noreferrer">GitHub Repository →</a>
+      )}
+
+      <div class="prose project-body">
+        <Content />
+      </div>
+    </div>
+  </article>
+</BaseLayout>
+
+<script>
+  const blocks = document.querySelectorAll('pre.astro-code[data-language="mermaid"]');
+  if (blocks.length > 0) {
+    const mermaid = (await import('mermaid')).default;
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark'
+      || (!document.documentElement.getAttribute('data-theme')
+        && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    mermaid.initialize({ startOnLoad: false, theme: isDark ? 'dark' : 'default' });
+
+    let i = 0;
+    for (const block of blocks) {
+      const code = block.querySelector('code')?.textContent ?? '';
+      const container = document.createElement('div');
+      container.className = 'mermaid-diagram';
+      try {
+        const { svg } = await mermaid.render(`mermaid-${i++}`, code);
+        container.innerHTML = svg;
+        block.replaceWith(container);
+      } catch (e) {
+        console.error('Mermaid render failed', e);
+      }
+    }
+  }
+</script>
+
+<style is:global>
+  .mermaid-diagram {
+    margin: 1.5em 0;
+    overflow-x: auto;
+    text-align: center;
+  }
+
+  .mermaid-diagram svg {
+    max-width: 100%;
+    height: auto;
+  }
+</style>
+
+<style>
+  .back-link {
+    display: block;
+    font-size: 0.9rem;
+    margin-bottom: 24px;
+  }
+
+  .back-link:hover {
+    color: var(--accent);
+  }
+
+  .project-head-tags {
+    display: flex;
+    gap: 8px;
+  }
+
+  .project-title {
+    font-size: clamp(1.6rem, 4vw, 2.2rem);
+    margin-top: 16px;
+  }
+
+  .project-summary {
+    margin-top: 12px;
+    font-size: 1.05rem;
+  }
+
+  .project-tags {
+    margin-top: 20px;
+  }
+
+  .project-body {
+    margin-top: 36px;
+    padding-top: 28px;
+    border-top: 1px solid var(--border);
+  }
+
+  a.btn {
+    margin-top: 24px;
+  }
+</style>

@@ -20,7 +20,7 @@ export const featuredRepos = [
   {
     name: 'FinanceManage_Agent-Project',
     description: '데이터 분석 기반 AI 에이전트로 주식 자동매매를 실행하는 풀스택 프로젝트.',
-    href: 'https://github.com/Lib0823/FinanceManage_Agent-Project',
+    href: '/project/finance-manage-agent/',
   },
   {
     name: 'MSA_Cascading_Failure_Mitigation-Research',
@@ -30,6 +30,6 @@ export const featuredRepos = [
   {
     name: 'Claude_Context_Kit-Plugin',
     description: 'Knowledge Graph, Agent Team Harness 등 개발 컨텍스트를 통합 구축하는 Claude Code 플러그인.',
-    href: 'https://github.com/Lib0823/Claude_Context_Kit-Plugin',
+    href: '/project/claude-context-kit/',
   },
 ];

@@ -25,7 +25,10 @@ const projects = (await getCollection('project')).sort((a, b) => a.data.order - 
             <p class="text-muted">{project.data.summary}</p>
             <div class="tag-row">
               {project.data.stack.map((tech) => (
-                <span class="badge badge-outline">{tech}</span>
+                <span class="badge">{tech}</span>
+              ))}
+              {project.data.tags.map((tag) => (
+                <span class="badge badge-outline">{tag}</span>
               ))}
             </div>
           </a>

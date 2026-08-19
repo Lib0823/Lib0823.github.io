@@ -25,7 +25,7 @@ export const featuredRepos = [
   {
     name: 'MSA_Cascading_Failure_Mitigation-Research',
     description: 'GNN 기반 예측으로 MSA 연쇄 장애를 선제적으로 완화하는 지능형 대응 아키텍처 연구.',
-    href: 'https://github.com/Lib0823/MSA_Cascading_Failure_Mitigation-Research',
+    href: '/research/projects/msa-cascading-failure/',
   },
   {
     name: 'Claude_Context_Kit-Plugin',

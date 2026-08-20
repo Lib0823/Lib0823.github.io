@@ -12,6 +12,10 @@ export async function getStaticPaths() {
 
 const { project } = Astro.props;
 const { Content } = await render(project);
+
+const issues = (await getCollection('projectCase'))
+  .filter((c) => c.data.project === project.id)
+  .sort((a, b) => a.data.order - b.data.order);
 ---
 
 <BaseLayout title={project.data.title} description={project.data.summary}>
@@ -42,6 +46,20 @@ const { Content } = await render(project);
       <div class="prose project-body">
         <Content />
       </div>
+
+      {issues.length > 0 && (
+        <div class="project-issues">
+          <h2>Troubleshooting</h2>
+          <div class="issue-list">
+            {issues.map((issue) => (
+              <a class="card issue-card" href={`/project/${project.id}/${issue.id.split('/')[1]}/`}>
+                <h3>{issue.data.title}</h3>
+                <p class="text-muted">{issue.data.summary}</p>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   </article>
 </BaseLayout>
@@ -122,5 +140,31 @@ const { Content } = await render(project);
 
   a.btn {
     margin-top: 24px;
+  }
+
+  .project-issues {
+    margin-top: 48px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+  }
+
+  .project-issues h2 {
+    font-size: 1.3rem;
+  }
+
+  .issue-list {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .issue-card h3 {
+    font-size: 1.05rem;
+  }
+
+  .issue-card p {
+    margin-top: 8px;
+    font-size: 0.92rem;
   }
 </style>

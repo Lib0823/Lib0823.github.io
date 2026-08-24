@@ -97,10 +97,10 @@ Tistory 글을 옮길 때는 `Title / Overview / Background / Implementation / R
 `src/content/publications/<slug>/index.md`로 추가한다. `pdf` / `slides` / `repo` 필드는 선택
 값이며, 값이 없으면 해당 링크 대신 "준비 중" 배지가 노출된다.
 
-## Resume / Portfolio
+## Portfolio
 
-Home 하단의 Resume·Portfolio 버튼은 `/resume.pdf`, `/portfolio.pdf`를 가리킨다. 실제 PDF 파일을
-`public/resume.pdf`, `public/portfolio.pdf`로 추가하면 된다.
+Home 첫 섹션(Hero)의 "포트폴리오 (PDF)" 버튼은 `/portfolio.pdf`를 가리킨다. 실제 PDF 파일을
+`public/portfolio.pdf`로 추가하면 된다.
 
 ## 로컬 개발
 

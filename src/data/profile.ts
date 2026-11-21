@@ -18,6 +18,11 @@ export const techStack = [
 
 export const featuredRepos = [
   {
+    name: 'Dev_Agent-Platform',
+    description: 'GitLab 이슈 수정부터 코드베이스 리서치까지 다루는 Claude Code 기반 에이전트 플랫폼. 사내 운영 중.',
+    href: '/project/dev-agent-platform/',
+  },
+  {
     name: 'FinanceManage_Agent-Project',
     description: '데이터 분석 기반 AI 에이전트로 주식 자동매매를 실행하는 풀스택 프로젝트.',
     href: '/project/finance-manage-agent/',
@@ -26,10 +31,5 @@ export const featuredRepos = [
     name: 'MSA_Cascading_Failure_Mitigation-Research',
     description: 'GNN 기반 예측으로 MSA 연쇄 장애를 선제적으로 완화하는 지능형 대응 아키텍처 연구.',
     href: '/research/projects/msa-cascading-failure/',
-  },
-  {
-    name: 'Claude_Context_Kit-Plugin',
-    description: 'Knowledge Graph, Agent Team Harness 등 개발 컨텍스트를 통합 구축하는 Claude Code 플러그인.',
-    href: '/project/claude-context-kit/',
   },
 ];
